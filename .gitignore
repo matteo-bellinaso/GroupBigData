@@ -1,6 +1,6 @@
 # Compiled source #
 ###################
-.idea
+.idea/
 *.iml
 *.class
 *.dll
