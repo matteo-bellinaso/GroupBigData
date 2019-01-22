@@ -1,8 +1,8 @@
 package persistence;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import org.apache.calcite.prepare.Prepare;
+
+import java.sql.*;
 
 public class ConnectionProvider {
     public static Connection openConnection() {
@@ -19,11 +19,37 @@ public class ConnectionProvider {
         return null;
     }
 
-    public static void closeConnection(Connection conn) {
+    public static boolean  closeConnection(Connection conn) {
         try {
             conn.close();
+            return true;
         } catch (SQLException exception) {
             System.out.println("Errore durante la chiusura della connessione: " + exception.getMessage());
+            return false;
         }
+    }
+
+    public static  void closeResultSetAndStatementAndConnection(ResultSet result, Statement statement, Connection conn){
+        try {
+            result.close();
+        } catch (Exception rse) {
+            rse.printStackTrace();
+        }
+        try {
+            statement.close();
+        } catch (Exception sse) {
+            sse.printStackTrace();
+        }
+        ConnectionProvider.closeConnection(conn);
+    }
+
+    public static boolean closeStatementAndConnection(Statement statement, Connection conn){
+        try {
+            statement.close();
+        } catch (Exception sse) {
+            sse.printStackTrace();
+            return false;
+        }
+        return ConnectionProvider.closeConnection(conn);
     }
 }

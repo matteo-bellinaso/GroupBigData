@@ -19,11 +19,5 @@ public interface FileDataDao {
 
     boolean writeFileDatas(List<FileData> fileDatas);
 
-    List<Repo> getAllRepo();
 
-    Repo getRepoById(Long id);
-
-    boolean writeRepo(Repo repo);
-
-    boolean writeRepos(List<Repo> repos);
 }
