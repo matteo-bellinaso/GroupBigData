@@ -1,3 +1,5 @@
+import org.apache.commons.configuration.ConfigurationFactory
+
 object main {
   def main(args: Array[String]): Unit = {
 
@@ -6,6 +8,7 @@ object main {
 
     val fileExtractor = new FileExtractor
     fileExtractor.extract("Download.gz", "Output.json")
+    // SetConfig.setSparkConfiguration()
   }
 
 
