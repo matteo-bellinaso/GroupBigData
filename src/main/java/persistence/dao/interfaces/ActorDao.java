@@ -12,4 +12,10 @@ public interface ActorDao {
     boolean writeActor(Actor actor);
 
     boolean writeActors(List<Actor> actors);
+
+    boolean updateActor(Actor actor);
+
+    boolean deleteActor(Long id);
+
+    int deleteActors(List<Long> id);
 }

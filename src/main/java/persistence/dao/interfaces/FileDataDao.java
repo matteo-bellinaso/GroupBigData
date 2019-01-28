@@ -9,15 +9,24 @@ import java.util.List;
 
 public interface FileDataDao {
 
-    List<FileData> getAllFileData();
+    List<FileData> getAllFileData(boolean withRel);
 
-    FileData getFileDataById(Long id);
+    FileData getFileDataById(Long id,boolean withRel);
 
-    List<FileData> getFileDatabyCreationData(Date date);
+    List<FileData> getFileDatabyCreationDate(Date date, boolean withRel);
 
-    boolean writeFileData(FileData fileData);
+    boolean writeFileData(FileData fileData, boolean withRel);
+
+    boolean updateFileData(FileData fileData, boolean withRel);
 
     boolean writeFileDatas(List<FileData> fileDatas);
+
+    boolean deleteFileData(Long id);
+
+    int deleteFileDatas(List<Long> listId);
+
+
+
 
 
 }

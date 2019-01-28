@@ -4,16 +4,16 @@ import java.sql.Date;
 
 public class FileData {
     private Long id_file;
-    private Long id_actor;
-    private Long id_repo;
+    private Actor actor;
+    private Repo repo;
     private String type;
     private boolean pubblico;
     private Date created_at;
 
-    public FileData(Long id_file, Long id_actor, Long id_repo, String type, boolean pubblico, Date created_at) {
+    public FileData(Long id_file, Actor actor, Repo repo, String type, boolean pubblico, Date created_at) {
         this.id_file = id_file;
-        this.id_actor = id_actor;
-        this.id_repo = id_repo;
+        this.actor = actor;
+        this.repo = repo;
         this.type = type;
         this.pubblico = pubblico;
         this.created_at = created_at;
@@ -27,20 +27,20 @@ public class FileData {
         this.id_file = id_file;
     }
 
-    public Long getId_actor() {
-        return id_actor;
+    public Actor getActor() {
+        return actor;
     }
 
-    public void setId_actor(Long id_actor) {
-        this.id_actor = id_actor;
+    public void setActor(Actor actor) {
+        this.actor = actor;
     }
 
-    public Long getId_repo() {
-        return id_repo;
+    public Repo getRepo() {
+        return repo;
     }
 
-    public void setId_repo(Long id_repo) {
-        this.id_repo = id_repo;
+    public void setRepo(Repo repo) {
+        this.repo = repo;
     }
 
     public String getType() {

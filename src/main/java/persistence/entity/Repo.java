@@ -5,6 +5,13 @@ public class Repo {
     private String name;
     private String url;
 
+    public Repo() {
+        id = null;
+        name = null;
+        url = null;
+    }
+
+
     public Repo(Long id, String name, String url) {
         this.id = id;
         this.name = name;

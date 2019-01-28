@@ -9,7 +9,7 @@ public class ConnectionProvider {
         Connection conn = null;
         try {
             Class.forName("org.postgresql.Driver");
-            conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/projectDB", "postgres", "postgres");//
+            conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/postgres", "postgres", "postgres");//
             return conn;
         } catch (Exception e) {
             e.printStackTrace();
@@ -28,6 +28,7 @@ public class ConnectionProvider {
             return false;
         }
     }
+
 
     public static  void closeResultSetAndStatementAndConnection(ResultSet result, Statement statement, Connection conn){
         try {
@@ -52,4 +53,6 @@ public class ConnectionProvider {
         }
         return ConnectionProvider.closeConnection(conn);
     }
+
+
 }

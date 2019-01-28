@@ -9,6 +9,14 @@ public class Actor {
     private String url;
     private String avatar_url;
 
+    public Actor() {
+        id = null;
+        login = null;
+        display_login = null;
+        gravatar_id = null;
+        url = null;
+        avatar_url = null;
+    }
 
     public Actor(Long id, String login, String display_login, String gravatar_id, String url, String avatar_url) {
         this.id = id;
