@@ -1,15 +1,23 @@
 package persistence;
 
-import org.apache.calcite.prepare.Prepare;
+
+import entity.ConnectionScala;
+import proprierties.SetConfig;
+
 
 import java.sql.*;
 
 public class ConnectionProvider {
+
+
     public static Connection openConnection() {
+
+        ConnectionScala connectionScala = SetConfig.setConnectionConfiguration();
+
         Connection conn = null;
         try {
-            Class.forName("org.postgresql.Driver");
-            conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/postgres", "postgres", "postgres");//
+            Class.forName(connectionScala.driver());
+            conn = DriverManager.getConnection(connectionScala.url(), connectionScala.user(), connectionScala.password());
             return conn;
         } catch (Exception e) {
             e.printStackTrace();
@@ -19,7 +27,7 @@ public class ConnectionProvider {
         return null;
     }
 
-    public static boolean  closeConnection(Connection conn) {
+    public static boolean closeConnection(Connection conn) {
         try {
             conn.close();
             return true;
@@ -30,7 +38,7 @@ public class ConnectionProvider {
     }
 
 
-    public static  void closeResultSetAndStatementAndConnection(ResultSet result, Statement statement, Connection conn){
+    public static void closeResultSetAndStatementAndConnection(ResultSet result, Statement statement, Connection conn) {
         try {
             result.close();
         } catch (Exception rse) {
@@ -44,7 +52,7 @@ public class ConnectionProvider {
         ConnectionProvider.closeConnection(conn);
     }
 
-    public static boolean closeStatementAndConnection(Statement statement, Connection conn){
+    public static boolean closeStatementAndConnection(Statement statement, Connection conn) {
         try {
             statement.close();
         } catch (Exception sse) {
