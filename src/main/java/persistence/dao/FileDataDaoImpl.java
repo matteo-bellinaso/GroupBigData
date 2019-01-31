@@ -8,6 +8,7 @@ import persistence.entity.Actor;
 import persistence.entity.FileData;
 import persistence.entity.Repo;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +90,7 @@ public class FileDataDaoImpl implements FileDataDao {
         PreparedStatement preparedStatement = null;
         try {
             conn = ConnectionProvider.openConnection();
-            preparedStatement = writeFileData(conn, fileData);
+            preparedStatement = writeFileDataUtility(conn, fileData, withRel);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -140,13 +141,13 @@ public class FileDataDaoImpl implements FileDataDao {
     }
 
     @Override
-    public boolean writeFileDatas(List<FileData> fileDatas) {
+    public boolean writeFileDatas(List<FileData> fileDatas, boolean withRel) {
         Connection conn = null;
         PreparedStatement preparedStatement = null;
         try {
             conn = ConnectionProvider.openConnection();
             for (FileData fileData : fileDatas) {
-                preparedStatement = writeFileData(conn, fileData);
+                preparedStatement = writeFileDataUtility(conn, fileData, withRel);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -157,20 +158,22 @@ public class FileDataDaoImpl implements FileDataDao {
     }
 
     @Override
-    public boolean deleteFileData(Long id) {
+    public boolean deleteFileData(Long id, boolean withRel) {
         Connection conn = null;
         int result = 0;
         PreparedStatement preparedStatement = null;
+
         try {
             conn = ConnectionProvider.openConnection();
-            preparedStatement = utilityDeleteFileData(conn, id);
-            result = preparedStatement.executeUpdate();
+            preparedStatement = utilityDeleteFileData(conn, id, withRel);
+
 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             ConnectionProvider.closeStatementAndConnection(preparedStatement, conn);
         }
+
         if (result == 1) {
             return true;
         }
@@ -183,14 +186,14 @@ public class FileDataDaoImpl implements FileDataDao {
      * @return the number of the deleted row
      */
     @Override
-    public int deleteFileDatas(List<Long> listId) {
+    public int deleteFileDatas(List<Long> listId, boolean withRel) {
         Connection conn = null;
         PreparedStatement preparedStatement = null;
         int result = 0;
         try {
             conn = ConnectionProvider.openConnection();
             for (Long id : listId) {
-                preparedStatement = utilityDeleteFileData(conn, id);
+                preparedStatement = utilityDeleteFileData(conn, id, withRel);
                 result = preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -203,7 +206,16 @@ public class FileDataDaoImpl implements FileDataDao {
     }
 
 
-    private PreparedStatement writeFileData(Connection conn, FileData fileData) throws SQLException {
+    private PreparedStatement writeFileDataUtility(Connection conn, FileData fileData, boolean withRel) throws SQLException {
+        if (withRel) {
+            if (fileData.getRepo() != null) {
+                new RepoDaoImpl().writeRepo(fileData.getRepo());
+            }
+
+            if (fileData.getActor() != null) {
+                new ActorDaoImpl().writeActor(fileData.getActor());
+            }
+        }
         PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO project_tables.file_data (id_file,type, public,created_at,id_actor,id_repo) VALUES (?,?,?,?,?,?)");
 
         preparedStatement.setObject(1, fileData.getId_file());
@@ -216,10 +228,29 @@ public class FileDataDaoImpl implements FileDataDao {
         return preparedStatement;
     }
 
-    private PreparedStatement utilityDeleteFileData(Connection conn, Long id) throws SQLException {
-        PreparedStatement preparedStatement = conn.prepareStatement("DELETE FROM project_tables.file_data where id_file= ?");
+    private PreparedStatement utilityDeleteFileData(Connection conn, Long id, boolean withRel) throws SQLException {
+        PreparedStatement preparedStatement;
+        RepoDao repoDao = new RepoDaoImpl();
+        ActorDao actorDao = new ActorDaoImpl();
+        FileData fileData = null;
+
+        preparedStatement = conn.prepareStatement("DELETE FROM project_tables.file_data where id_file= ?");
+
         preparedStatement.setLong(1, id);
 
+        if (withRel) {
+
+            fileData = getFileDataById(id, false);
+
+            if (fileData != null && fileData.getRepo() != null && fileData.getRepo().getId() != null) {
+                repoDao.deleteRepo(fileData.getRepo().getId());
+            }
+
+            if (fileData != null && fileData.getActor() != null && fileData.getActor().getId() != null) {
+                actorDao.deleteActor(fileData.getActor().getId());
+            }
+
+        }
         return preparedStatement;
     }
 

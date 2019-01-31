@@ -19,11 +19,11 @@ public interface FileDataDao {
 
     boolean updateFileData(FileData fileData, boolean withRel);
 
-    boolean writeFileDatas(List<FileData> fileDatas);
+    boolean writeFileDatas(List<FileData> fileDatas, boolean withRel);
 
-    boolean deleteFileData(Long id);
+    boolean deleteFileData(Long id, boolean withRel);
 
-    int deleteFileDatas(List<Long> listId);
+    int deleteFileDatas(List<Long> listId, boolean withRel);
 
 
 

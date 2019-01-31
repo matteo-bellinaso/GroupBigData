@@ -41,7 +41,7 @@ public class RepoDaoImpl implements RepoDao {
         PreparedStatement preparedStatement = null;
         try {
             conn = ConnectionProvider.openConnection();
-            preparedStatement = conn.prepareStatement("SELECT * FROM repo where id_repo= ?");
+            preparedStatement = conn.prepareStatement("SELECT * FROM project_tables.repo where id_repo= ?");
             preparedStatement.setLong(1, id);
             result = preparedStatement.executeQuery();
             repoList = fromRsToRepo(result);

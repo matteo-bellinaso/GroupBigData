@@ -1,5 +1,7 @@
 package persistence.entity;
 
+import java.util.Objects;
+
 public class Repo {
     private Long id;
     private String name;
@@ -40,5 +42,25 @@ public class Repo {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Repo)) return false;
+
+        Repo repo = (Repo) o;
+
+        if (getId() != null ? !getId().equals(repo.getId()) : repo.getId() != null) return false;
+        if (getName() != null ? !getName().equals(repo.getName()) : repo.getName() != null) return false;
+        return getUrl() != null ? getUrl().equals(repo.getUrl()) : repo.getUrl() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
+        result = 31 * result + (getUrl() != null ? getUrl().hashCode() : 0);
+        return result;
     }
 }

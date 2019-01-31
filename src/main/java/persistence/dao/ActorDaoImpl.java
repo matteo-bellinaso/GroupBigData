@@ -39,7 +39,7 @@ public class ActorDaoImpl implements ActorDao {
         PreparedStatement preparedStatement = null;
         try {
             conn = ConnectionProvider.openConnection();
-            preparedStatement = conn.prepareStatement("SELECT * FROM project_tables.actor where id_file= ?");
+            preparedStatement = conn.prepareStatement("SELECT * FROM project_tables.actor where id_actor= ?");
             preparedStatement.setLong(1, id);
             result = preparedStatement.executeQuery();
             actorList = fromRsToActor(result);
