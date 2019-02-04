@@ -3,6 +3,7 @@ package persistence.dao;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import persistence.DatabasePreparator;
 import persistence.dao.interfaces.RepoDao;
 import persistence.entity.Repo;
 
@@ -11,7 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class RepoDaoImplTest {
+public class RepoDaoImplTest extends DatabasePreparator {
     static List<Long> ids;
     static RepoDao dao;
 

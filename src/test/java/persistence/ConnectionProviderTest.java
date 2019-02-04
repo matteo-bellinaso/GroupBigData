@@ -1,10 +1,12 @@
 package persistence;
 
+import org.junit.Test;
+
 import static org.junit.Assert.*;
 
-public class ConnectionProviderTest {
+public class ConnectionProviderTest extends DatabasePreparator{
 
-    @org.junit.Test
+    @Test
     public void openConnection() {
         ConnectionProvider.openConnection();
         assertNotNull(ConnectionProvider.openConnection());

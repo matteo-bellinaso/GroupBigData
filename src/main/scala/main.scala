@@ -1,18 +1,29 @@
-import org.apache.commons.configuration.ConfigurationFactory
-import proprierties.SetConfig
-import persistence.ConnectionProvider
+
+import fileUtilities.{FileDownloader, FileExtractor}
+import properties.{ApplicationConfig, SparkConfig}
+import utility.{Paths, PropertyEnum}
 
 object main {
   def main(args: Array[String]): Unit = {
+    ApplicationConfig.init(Paths.applicationConfigPath)
 
-    SetConfig.setSparkConfiguration()
+    SparkConfig.init(Paths.sparkConfigPath)
+    SparkConfig.instance().setSparkConfiguration()
 
-    val fileDownloader = new FileDownloader
-    fileDownloader.download("https://srv-file1.gofile.io/download/e5xxGs/57b9b04d902588405c3d4c6022e151ee/2018-03-01-0.json.gz", "Download.gz")
+
+    //"https://srv-file1.gofile.io/download/e5xxGs/57b9b04d902588405c3d4c6022e151ee/2018-03-01-0.json.gz"
+    val filename = new FileDownloader().downloadWithRedirect("http://data.githubarchive.org/2018-03-01-0.json.gz")
+
 
     val fileExtractor = new FileExtractor
-    fileExtractor.extract("Download.gz", "Output.json")
+    fileExtractor.extract(
+      ApplicationConfig.instance().getProperty(PropertyEnum.downloadLocation) + filename,
+      ApplicationConfig.instance().getProperty(PropertyEnum.jsonLocation) + cutExtensionFromFilename(filename) + "-" + System.currentTimeMillis() + ".json")
   }
 
+  def cutExtensionFromFilename(filename: String): String = {
+    val splittedFileName = filename.split("\\.")
+    splittedFileName(0)
+  }
 
 }

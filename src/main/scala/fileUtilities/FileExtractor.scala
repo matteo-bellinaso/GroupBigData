@@ -1,5 +1,8 @@
+package fileUtilities
+
 import java.io._
 import java.util.zip._
+
 import scala.io.Source
 
 class FileExtractor {
@@ -10,9 +13,10 @@ class FileExtractor {
     var fos = new FileOutputStream(output)
     var w = new PrintWriter(new OutputStreamWriter(fos, "UTF-8"))
     for (line <- Source.fromInputStream(in).getLines()) {
-      println(line)
+     // println(line)
       w.write(line + "\n")
     }
+
     w.close()
     fos.close()
   }

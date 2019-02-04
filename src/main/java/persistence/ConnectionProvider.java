@@ -2,7 +2,7 @@ package persistence;
 
 
 import entity.ConnectionScala;
-import proprierties.SetConfig;
+import properties.ApplicationConfig;
 
 
 import java.sql.*;
@@ -12,7 +12,8 @@ public class ConnectionProvider {
 
     public static Connection openConnection() {
 
-        ConnectionScala connectionScala = SetConfig.setConnectionConfiguration();
+
+        ConnectionScala connectionScala = ApplicationConfig.instance().setConnectionConfiguration();
 
         Connection conn = null;
         try {
@@ -26,17 +27,6 @@ public class ConnectionProvider {
         }
         return null;
     }
-
-    public static boolean closeConnection(Connection conn) {
-        try {
-            conn.close();
-            return true;
-        } catch (SQLException exception) {
-            System.out.println("Errore durante la chiusura della connessione: " + exception.getMessage());
-            return false;
-        }
-    }
-
 
     public static void closeResultSetAndStatementAndConnection(ResultSet result, Statement statement, Connection conn) {
         try {
@@ -60,6 +50,16 @@ public class ConnectionProvider {
             return false;
         }
         return ConnectionProvider.closeConnection(conn);
+    }
+
+    private static boolean closeConnection(Connection conn) {
+        try {
+            conn.close();
+            return true;
+        } catch (SQLException exception) {
+            System.out.println("Errore durante la chiusura della connessione: " + exception.getMessage());
+            return false;
+        }
     }
 
 

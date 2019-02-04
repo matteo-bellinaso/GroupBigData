@@ -3,24 +3,24 @@ package persistence.dao;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import persistence.DatabasePreparator;
 import persistence.dao.interfaces.ActorDao;
 import persistence.entity.Actor;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class ActorDaoImplTest {
+public class ActorDaoImplTest extends DatabasePreparator {
 
 
-    static List<Long> ids;
+
     static ActorDao dao;
 
     @BeforeClass
     public static void initialize() {
-        ids = new ArrayList<>();
+
         dao = new ActorDaoImpl();
     }
 

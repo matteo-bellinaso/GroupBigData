@@ -3,6 +3,7 @@ package persistence.dao;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import persistence.DatabasePreparator;
 import persistence.dao.interfaces.FileDataDao;
 import persistence.entity.Actor;
 import persistence.entity.FileData;
@@ -14,7 +15,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class FileDataDaoImplTest {
+public class FileDataDaoImplTest extends DatabasePreparator {
     private Date sampleDate=Date.valueOf("2018-01-01");
     private Date sampleDate2=Date.valueOf("2018-01-01");
     static List<Long> ids;
