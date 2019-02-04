@@ -4,9 +4,9 @@ import java.sql.Date;
 import java.util.Objects;
 
 public class FileData {
-    private Long id_file;
-    private Actor actor;
-    private Repo repo;
+    private Long id_file;//pk
+    private Actor actor; //actor fk
+    private Repo repo; //repo fk
     private String type;
     private boolean pubblico;
     private Date created_at;

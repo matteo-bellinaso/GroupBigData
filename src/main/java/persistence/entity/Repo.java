@@ -3,7 +3,7 @@ package persistence.entity;
 import java.util.Objects;
 
 public class Repo {
-    private Long id;
+    private Long id;//pk
     private String name;
     private String url;
 

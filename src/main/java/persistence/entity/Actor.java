@@ -4,7 +4,7 @@ package persistence.entity;
 import java.util.Objects;
 
 public class Actor {
-    private Long id;
+    private Long id; //pk
     private String login;
     private String display_login;
     private String gravatar_id;
