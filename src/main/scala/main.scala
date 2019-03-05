@@ -22,9 +22,10 @@ object main {
       ApplicationConfig.instance().getProperty(PropertyEnum.downloadLocation) + filename,
       ApplicationConfig.instance().getProperty(PropertyEnum.jsonLocation) + cutExtensionFromFilename(filename) + "-" + System.currentTimeMillis() + ".json")
 
-    val strunzDF = Converter.ConvertJSON(path , contex)
+    val strunzDF = Converter.ConvertJSONToDS(path , contex)
 
-    val entireDF = strunzDF.show()
+    val strunzRDD = Converter.ConvertJSONToRDD(path, contex)
+
   }
 
   def cutExtensionFromFilename(filename: String): String = {

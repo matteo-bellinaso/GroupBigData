@@ -3,7 +3,7 @@ package proprierties
 import entity.{MainParsed, Payload}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.{Dataset, Encoders, SQLContext, SparkSession}
+import org.apache.spark.sql._
 import spray.json._
 import DefaultJsonProtocol._
 
@@ -11,19 +11,29 @@ import DefaultJsonProtocol._
 object Converter {
 
 
-  def ConvertJSON(file: String, sc: SparkConf) = {
+
+
+  def ConvertJSONToDS(file: String, sc: SparkConf) = {
 
     val eventEncoder = Encoders.product[MainParsed]
 
     val spark = SparkSession.builder().config(sc).getOrCreate()
-    import spark.implicits._
-    // val jsonDFPublic = spark.read.json(file).withColumnRenamed("public", "publico")
-    val jsonDFPublic2 = spark.read.option("inferSchema", true).json(file).withColumnRenamed("public", "publico")
+    val jsonDFPublic2 = spark.read.option("inferSchema", 20).json(file).withColumnRenamed("public", "publico")
 
     val mainDS: Dataset[MainParsed] = jsonDFPublic2.as[MainParsed](eventEncoder)
 
-    val mainDF = mainDS.toDF
+    mainDS
+  }
 
+  def ConvertJSONToDF(file: String, sc: SparkConf): DataFrame = {
+    val mainDS = ConvertJSONToDS(file, sc)
+    val mainDF = mainDS.toDF
     mainDF
+  }
+
+  def ConvertJSONToRDD(file: String, sc: SparkConf): RDD[MainParsed] = {
+    val mainDS = ConvertJSONToDS(file, sc)
+    val mainRDD = mainDS.rdd
+    mainRDD
   }
 }
