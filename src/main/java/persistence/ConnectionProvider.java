@@ -1,9 +1,9 @@
 package persistence;
 
 
+
 import entity.ConnectionScala;
 import properties.ApplicationConfig;
-
 
 import java.sql.*;
 

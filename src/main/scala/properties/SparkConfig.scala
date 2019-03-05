@@ -8,7 +8,7 @@ import org.apache.spark.SparkConf
 
 class SparkConfig private(private val prop:Properties, private val propKey: java.util.Enumeration[_]) {
 
-  def setSparkConfiguration() = {
+  def setSparkConfiguration(): SparkConf = {
     val sparkConf = new SparkConf()
 
     while (propKey.hasMoreElements) {
@@ -16,6 +16,7 @@ class SparkConfig private(private val prop:Properties, private val propKey: java
       sparkConf.set(key, prop.getProperty(key))
       //println(key)
     }
+    sparkConf
   }
 }
 

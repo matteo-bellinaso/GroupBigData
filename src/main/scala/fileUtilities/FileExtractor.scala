@@ -7,7 +7,7 @@ import scala.io.Source
 
 class FileExtractor {
 
-  def extract(input: String, output: String) {
+  def extract(input: String, output: String): String =  {
     var in = new GZIPInputStream(new FileInputStream(input))
     // write setup in different objects to close later properly (important for big files )
     var fos = new FileOutputStream(output)
@@ -19,5 +19,7 @@ class FileExtractor {
 
     w.close()
     fos.close()
+    output
   }
+
 }
