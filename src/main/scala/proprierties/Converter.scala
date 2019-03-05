@@ -22,7 +22,7 @@ object Converter {
 
     val mainDS: Dataset[MainParsed] = jsonDFPublic2.as[MainParsed](eventEncoder)
 
-    mainDS
+    mainDS.dropDuplicates("id")
   }
 
   def ConvertJSONToDF(file: String, sc: SparkConf): DataFrame = {
