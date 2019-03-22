@@ -10,9 +10,6 @@ import DefaultJsonProtocol._
 
 object Converter {
 
-
-
-
   def ConvertJSONToDS(file: String, sc: SparkConf) = {
 
     val eventEncoder = Encoders.product[MainParsed]

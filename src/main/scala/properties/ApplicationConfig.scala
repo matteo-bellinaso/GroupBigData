@@ -29,7 +29,7 @@ class ApplicationConfig private(private val prop: Properties, private val propKe
        }
      }
      ConnectionScala(user, password, url, driver)*/
-    ConnectionScala(getProperty(PropertyEnum.user), getProperty(PropertyEnum.password), getProperty(PropertyEnum.dbUrl), PropertyEnum.driver)
+    ConnectionScala(getProperty(PropertyEnum.user), getProperty(PropertyEnum.password), getProperty(PropertyEnum.dbUrl), getProperty(PropertyEnum.driver))
   }
 }
 

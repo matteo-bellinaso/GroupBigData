@@ -4,11 +4,12 @@ import persistence.ConnectionProvider;
 import persistence.dao.interfaces.ActorDao;
 import persistence.entity.Actor;
 
+import java.io.Serializable;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActorDaoImpl implements ActorDao {
+public class ActorDaoImpl implements ActorDao, Serializable {
     @Override
     public List<Actor> getAllActor() {
         Connection conn = null;

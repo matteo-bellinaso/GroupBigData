@@ -1,3 +1,5 @@
+import java.math.BigInteger
+
 import entity.Actor
 import fileUtilities.{FileDownloader, FileExtractor}
 import org.apache.commons.configuration.ConfigurationFactory
@@ -6,6 +8,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.DataFrame
 import proprierties.Converter
 import persistence.ConnectionProvider
+import persistence.dao.ActorDaoImpl
 import properties.{ApplicationConfig, SparkConfig}
 import utility.{Paths, PropertyEnum}
 
@@ -32,9 +35,16 @@ object main {
 
     val strunzRDD = Converter.ConvertJSONToRDD(path, contex)
 
-    val actorDF = strunzDF.select("actor.*").dropDuplicates("id")
+    val actorDF = ActorThings.getActorDS(strunzDF)
+
+    val actorRDD = ActorThings.getActorRDD(strunzRDD)
+    // val actorNM = actorDF.select("id", "login")
+
+
 
     actorDF.write.csv(PropertyEnum.csvLocation + "actor")
+
+
   }
 
   def cutExtensionFromFilename(filename: String): String = {
