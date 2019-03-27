@@ -1,8 +1,8 @@
+package operations.RDDOperation
+
 import entity._
-import org.apache.avro.generic.GenericData.StringType
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{DataFrame, Dataset, Encoders, Row}
+import org.apache.spark.sql.Encoders
 
 class CommitOperations[T] {
 

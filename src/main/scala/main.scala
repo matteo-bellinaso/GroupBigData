@@ -1,6 +1,7 @@
 
 import entity.{Actor, MainParsed, Payload, Repo}
 import fileUtilities.{FileDownloader, FileExtractor}
+import operations.RDDOperation.{ActorOperations, CommitOperations}
 import org.apache.spark.rdd.RDD
 import properties.{ApplicationConfig, SparkConfig}
 import proprierties.{Converter, SaveCSV}
@@ -38,10 +39,12 @@ object main {
     SaveCSV.saveActorCsv(actorRDD)
     */
     val commitService = new CommitOperations[(String, String, Actor, Boolean, Repo, String, Payload)];
-    val count = commitService.getCommitCountFromRDD(strunzRDD)
-    println(count)
-    //val count = CommitService.getCommitCountDS(commit)
-    //print(count)
+
+    val actorService = new ActorOperations[(String, String, Actor, Boolean, Repo, String, Payload)]
+
+    val count = actorService.getActorForHour(strunzRDD)
+
+    count.collect.foreach(x => println(s"minuto: ${x._1}, numero ${x._2}"))
   }
 
   def cutExtensionFromFilename(filename: String): String = {
