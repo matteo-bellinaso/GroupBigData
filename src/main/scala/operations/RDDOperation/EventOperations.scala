@@ -1,9 +1,11 @@
 package operations.RDDOperation
 
+import java.text.SimpleDateFormat
+
 import entity.{Actor, Payload, Repo}
 import org.apache.spark.rdd.RDD
 
-class EventOperations[T] {
+class EventOperations[T] { //(mainParsed.id, mainParsed.`type`, mainParsed.actor, mainParsed.publico, mainParsed.repo, mainParsed.created_at, mainParsed.payload)
 
   def countEventPerActor(rdd: RDD[T]): RDD[(Actor, Int)] = {
 
@@ -80,6 +82,25 @@ class EventOperations[T] {
     finalRdd
   }
 
+  def findActorWithMinEvents(rdd: RDD[T]): RDD[(Actor, Int)] = {
+    val gettedRdd = countEventPerActor(rdd)
+    val actorWithMaxEvents = gettedRdd.reduce((x, y) => {
+      if (x._2 < y._2) {
+        x
+      } else y
+    })
+
+    val finalRdd = gettedRdd.filter { case (actor: Actor, numero) =>
+      numero == actorWithMaxEvents._2
+    }
+
+    /* val collectedRdd = finalRdd.collect
+     collectedRdd.foreach { case (actor: Actor, numero) => println(s"idAttore: ${actor.id}, --> eventi: ${numero} ") }*/
+
+
+    finalRdd
+  }
+
 
   private def groupPerActor(rdd: RDD[T]): RDD[(Actor, scala.Iterable[T])] = {
     val grouppedRdd = rdd.groupBy { case (_, _, actor: Actor, _, _, _, _) => actor }
@@ -96,18 +117,29 @@ class EventOperations[T] {
     grouppedRdd
   }
 
-  def groupByType(rdd: RDD[T]): RDD[(String, scala.Iterable[T])] = {
+  private def groupByType(rdd: RDD[T]): RDD[(String, scala.Iterable[T])] = {
     val grouppedRdd = rdd.groupBy { case (_, tipo: String, _, _, _, _, _) => tipo }
     grouppedRdd
   }
+
+
+ /* private def groupPerTypeActorRepoAndHour(rdd: RDD[T]): RDD[((Actor, Repo, String, Int), scala.Iterable[T])] = {
+    val mappedRdd = rdd.map { case (id: String, tipo: String, actor: Actor, pubblico: Boolean, repo: Repo, created_at: String, payload: Payload) =>
+      // val input = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+      // val date = new DateTime(input.parse(created_at))
+      // val date = input.parse(created_at)
+      (id, tipo, actor, pubblico, repo, 0, payload)
+    }
+    val grouppedRdd = mappedRdd.groupBy { case (_, tipo: String, actor: Actor, _, repo: Repo, hours: Int, _) => (actor, repo, tipo, hours) }
+
+    grouppedRdd
+
+  }*/
 
   private def groupByRepo(rdd: RDD[T]): RDD[(Repo, scala.Iterable[T])] = {
     val grouppedRdd = rdd.groupBy { case (_, _, _, _, repo: Repo, _, _) => repo }
     grouppedRdd
   }
 
-  private def groupPerTypeActorAndRepoAndHour(rdd: RDD[T]): RDD[((Actor, Repo, String, Int), scala.Iterable[T])] = {
-    val grouppedRdd = rdd.map { case (_, _, _, _, _, _, created_at: String) =>
-      val grouppedRdd = rdd.groupBy { case (_, tipo: String, actor: Actor, _, repo: Repo, _, created_at: String) => (actor, repo, tipo) }
-    }
-  }
+
+}
