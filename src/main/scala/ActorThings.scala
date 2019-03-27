@@ -28,10 +28,13 @@ object ActorThings {
 
   private def saveOnDBActorRDD(rdd: RDD[(String, Actor)]) = {
     val actorDao = new ActorDaoImpl()
-    rdd.foreach(x => {
+    rdd.collect.foreach(x => {
       val actorScala = x._2
       val actorJava = new persistence.entity.Actor(actorScala.id.longValue(), actorScala.login,actorScala.display_login, actorScala.gravatar_id, actorScala.url, actorScala.avatar_url);
-      actorDao.writeActor(actorJava)
+      actorDao.writeActor(actorJava);
     })
   }
+
+
+
 }

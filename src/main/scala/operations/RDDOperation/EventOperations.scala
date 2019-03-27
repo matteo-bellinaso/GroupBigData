@@ -106,8 +106,9 @@ class EventOperations[T] {
     grouppedRdd
   }
 
+  /*
   private def groupPerTypeActorAndRepoAndHour(rdd: RDD[T]): RDD[((Actor, Repo, String, Int), scala.Iterable[T])] = {
     val grouppedRdd = rdd.map { case (_, _, _, _, _, _, created_at: String) =>
       val grouppedRdd = rdd.groupBy { case (_, tipo: String, actor: Actor, _, repo: Repo, _, created_at: String) => (actor, repo, tipo) }
-    }
+    }*/
   }

@@ -7,7 +7,7 @@ import java.util.List;
 public interface ActorDao {
     List<Actor> getAllActor();
 
-    Actor getActorById(Long id);
+    Actor getActorById(Long id,boolean singleCall);
 
     boolean writeActor(Actor actor);
 

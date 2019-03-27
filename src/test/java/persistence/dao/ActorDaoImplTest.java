@@ -40,11 +40,11 @@ public class ActorDaoImplTest extends DatabasePreparator {
     public void updateActor() {
         Actor actor = sampleGenerator();
         writeOnDb(actor);
-        Actor result = dao.getActorById(actor.getId());
+        Actor result = dao.getActorById(actor.getId(), true);
         assertEquals(actor, result);
         actor.setAvatar_url("url modificato");
         dao.updateActor(actor);
-        result = dao.getActorById(actor.getId());
+        result = dao.getActorById(actor.getId(), true);
         assertEquals(actor, result);
     }
 
