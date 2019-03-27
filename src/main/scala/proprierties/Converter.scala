@@ -1,6 +1,7 @@
 package proprierties
 
-import entity.{MainParsed, Payload}
+import entity.{Actor, MainParsed, Payload, Repo}
+import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql._
@@ -9,6 +10,9 @@ import DefaultJsonProtocol._
 
 
 object Converter {
+
+
+
 
   def ConvertJSONToDS(file: String, sc: SparkConf) = {
 
@@ -28,9 +32,12 @@ object Converter {
     mainDF
   }
 
-  def ConvertJSONToRDD(file: String, sc: SparkConf): RDD[MainParsed] = {
+  def ConvertJSONToRDD(file: String, sc: SparkConf): RDD[(String, String, Actor, Boolean, Repo, String, Payload)] = {
     val mainDS = ConvertJSONToDS(file, sc)
     val mainRDD = mainDS.rdd
-    mainRDD
+    val mappedRdd = mainRDD.map(mainParsed => {
+      (mainParsed.id, mainParsed.`type`, mainParsed.actor, mainParsed.publico, mainParsed.repo, mainParsed.created_at, mainParsed.payload)
+    })
+    mappedRdd
   }
 }

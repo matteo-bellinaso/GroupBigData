@@ -62,8 +62,10 @@ public class ActorDaoImpl implements ActorDao, Serializable {
         Connection conn = null;
         PreparedStatement preparedStatement = null;
         try {
-            conn = ConnectionProvider.openConnection();
-            preparedStatement = writeActor(conn, actor);
+            if (getActorById(actor.getId()) == null) {
+                conn = ConnectionProvider.openConnection();
+                preparedStatement = writeActor(conn, actor);
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -79,6 +81,7 @@ public class ActorDaoImpl implements ActorDao, Serializable {
         PreparedStatement preparedStatement = null;
         try {
             conn = ConnectionProvider.openConnection();
+
             for (Actor actor : actors) {
                 preparedStatement = writeActor(conn, actor);
             }

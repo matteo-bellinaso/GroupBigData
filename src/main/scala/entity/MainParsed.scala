@@ -9,3 +9,4 @@ case class MainParsed(
                        publico: Boolean,
                        created_at: String
                      )
+
