@@ -16,6 +16,23 @@ class ActorOperations[T] {
     actor
   }
 
+  def getActorCountForHourAndType(rdd: RDD[T]) = {
+    val rdd1 = groupByTypeAndHour(rdd)
+    val actor = rdd1.aggregateByKey(0)((x,y) => x + 1, (x,y) => x + y)
+    actor
+  }
+
+  def getMaxActorForHour(rdd: RDD[T]) = {
+    val rdd1 = getActorForHour(rdd)
+    val rddMax = rdd1.reduceByKey((x,y) => { if(x > y) x else y})
+    rddMax
+  }
+
+  def getMinActorForHour(rdd: RDD[T]) = {
+    val rdd1 = getActorForHour(rdd)
+    val rddMax = rdd1.reduceByKey((x,y) => { if(x < y) x else y})
+    rddMax
+  }
 
   private def groupByTime(rdd: RDD[T]) = {
     val mappedRdd = rdd.map {case (_, _, actor: Actor, _, _, time: String, _) => {(actor, time)}}
@@ -23,6 +40,16 @@ class ActorOperations[T] {
       val temp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
       val tempo = new DateTime( temp.parse(time))
       (tempo.getMinuteOfHour(), actor)
+    }
+    timeRdd
+  }
+
+  private def groupByTypeAndHour(rdd:  RDD[T]) = {
+    val mappedRdd = rdd.map {case (_, tipo: String, actor: Actor, _, _, time: String, _) => {((time,tipo), actor)}}
+    val timeRdd = mappedRdd.map {case ((time: String, tipo: String), actor: Actor) =>
+      val temp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+      val tempo = new DateTime( temp.parse(time))
+      ((tempo.getMinuteOfHour(), tipo), actor)
     }
     timeRdd
   }
