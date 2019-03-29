@@ -31,4 +31,11 @@ class ActorOperation(sc: SparkContext) {
     val joined = getted.join(tot, col("all.count") === col("tot.countMax"))
     joined.select("time", "countMax")
   }
+
+  def getMinActorActiveForHour(dataframe: DataFrame) = {
+    val tot = getActorActiveForHour(dataframe).agg(min($"count")).withColumnRenamed("min(count)", "countMin").as("tot")
+    val getted = getActorActiveForHour(dataframe).select("*").as("all")
+    val joined = getted.join(tot, col("all.count") === col("tot.countMin"))
+    joined.select("time", "countMin")
+  }
 }

@@ -6,4 +6,4 @@ case class Commit (
                    message: String,
                    distinct: Boolean,
                    url: String
-                   )
+                   ) extends Serializable

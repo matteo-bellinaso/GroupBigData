@@ -1,6 +1,6 @@
 package converter
 
-import entity.{Actor, MainParsed, Payload, Repo}
+import entity._
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
@@ -8,6 +8,7 @@ import org.apache.spark.sql._
 import spray.json._
 import DefaultJsonProtocol._
 import org.apache.spark.sql.functions.udf
+import org.apache.spark.sql.types.StructType
 import org.joda.time.DateTime
 
 
@@ -48,4 +49,12 @@ object Converter {
     val tempo = new DateTime(sdf.parse(time))
     tempo.getMinuteOfHour()
   })
+
+
+  // prova per creare un DF dato un RDD di Row dove gli passo la struttura creata apposta per entity.commit
+  def createDF(sc: SparkConf, rdd: RDD[Row], struct: StructType) = {
+    val spark = SparkSession.builder().config(sc).getOrCreate()
+    val df = spark.createDataFrame(rdd, struct)
+    df
+  }
 }

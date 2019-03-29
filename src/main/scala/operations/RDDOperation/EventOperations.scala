@@ -183,6 +183,5 @@ class EventOperations[T] { //(mainParsed.id, mainParsed.`type`, mainParsed.actor
     val grouppedRdd = rdd.map { case (_, _, _, _, _, _, created_at: String) =>
       val grouppedRdd = rdd.groupBy { case (_, tipo: String, actor: Actor, _, repo: Repo, _, created_at: String) => (actor, repo, tipo) }
     }*/
-  }
 
 }
