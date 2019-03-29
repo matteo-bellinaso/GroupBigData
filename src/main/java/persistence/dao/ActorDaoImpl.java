@@ -33,7 +33,7 @@ public class ActorDaoImpl implements ActorDao, Serializable {
     }
 
     @Override
-    public Actor getActorById(Long id) {
+    public Actor getActorById(Long id,boolean singleCall) {
         Connection conn = null;
         ResultSet result = null;
         List<Actor> actorList = null;
@@ -48,7 +48,11 @@ public class ActorDaoImpl implements ActorDao, Serializable {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            ConnectionProvider.closeResultSetAndStatementAndConnection(result, preparedStatement, conn);
+            if(singleCall) {
+                ConnectionProvider.closeResultSetAndStatementAndConnection(result, preparedStatement, conn);
+            } else{
+                ConnectionProvider.closeResultSetAndStatent(result,preparedStatement);
+            }
         }
         if (actorList != null && actorList.size() > 0) {
             return actorList.get(0);
@@ -62,11 +66,10 @@ public class ActorDaoImpl implements ActorDao, Serializable {
         Connection conn = null;
         PreparedStatement preparedStatement = null;
         try {
-            if (getActorById(actor.getId()) == null) {
+            if (getActorById(actor.getId(),false) == null) {
                 conn = ConnectionProvider.openConnection();
                 preparedStatement = writeActor(conn, actor);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -81,7 +84,6 @@ public class ActorDaoImpl implements ActorDao, Serializable {
         PreparedStatement preparedStatement = null;
         try {
             conn = ConnectionProvider.openConnection();
-
             for (Actor actor : actors) {
                 preparedStatement = writeActor(conn, actor);
             }

@@ -269,7 +269,7 @@ public class FileDataDaoImpl implements FileDataDao {
                 if (!withRel) {
                     actor.setId(result.getLong("id_actor"));
                 } else {
-                    actor = actorDao.getActorById(result.getLong("id_actor"));
+                    actor = actorDao.getActorById(result.getLong("id_actor"), false);
                 }
             }
 

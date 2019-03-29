@@ -29,22 +29,32 @@ public class ConnectionProvider {
     }
 
     public static void closeResultSetAndStatementAndConnection(ResultSet result, Statement statement, Connection conn) {
+       ConnectionProvider.closeResultSetAndStatent(result,statement);
+        ConnectionProvider.closeConnection(conn);
+    }
+
+    public static  void closeResultSetAndStatent(ResultSet result, Statement statement){
         try {
-            result.close();
+            if(result!=null) {
+                result.close();
+            }
         } catch (Exception rse) {
             rse.printStackTrace();
         }
         try {
-            statement.close();
+            if(statement!= null) {
+                statement.close();
+            }
         } catch (Exception sse) {
             sse.printStackTrace();
         }
-        ConnectionProvider.closeConnection(conn);
     }
 
     public static boolean closeStatementAndConnection(Statement statement, Connection conn) {
         try {
-            statement.close();
+            if(statement!= null) {
+                statement.close();
+            }
         } catch (Exception sse) {
             sse.printStackTrace();
             return false;
@@ -54,7 +64,9 @@ public class ConnectionProvider {
 
     private static boolean closeConnection(Connection conn) {
         try {
-            conn.close();
+            if(conn != null) {
+                conn.close();
+            }
             return true;
         } catch (SQLException exception) {
             System.out.println("Errore durante la chiusura della connessione: " + exception.getMessage());

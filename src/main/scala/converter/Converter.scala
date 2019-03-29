@@ -3,7 +3,10 @@ package converter
 import entity.{Actor, MainParsed, Payload, Repo}
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
+import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql._
+import spray.json._
+import DefaultJsonProtocol._
 
 
 object Converter {
@@ -37,8 +40,4 @@ object Converter {
     })
     mappedRdd
   }
-
-  /*def ConvertRDDToDS(rdd: RDD[_]): Dataset[_]{
-    val ds = rdd
-  }*/
 }
