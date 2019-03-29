@@ -24,12 +24,12 @@ object main {
 
  //   val strunzDF = Converter.ConvertJSONToDS(path , contex)
 
-    val path ="/Users/davidebelvedere/Documents/SparkLynx/GroupBigData2/src/archive/JSONFiles/2018-03-01-0-1553603303171.json"
+    val path ="/Users/davidebelvedere/Documents/SparkLynx/GroupBigData3/src/archive/JSONFiles/2018-03-01-0-1553603303171.json"
 
     val rddFromJson = Converter.ConvertJSONToRDD(path, contex)
     val  eventOperation= new EventOperations[(String, String, Actor, Boolean, Repo, String, Payload)]()
    // eventOperation.countEventPerActor(rddFromJson)
-    eventOperation.countEventPerType(rddFromJson)
+    eventOperation.findActorRepoAndHourMaxEvents(rddFromJson)
 
   }
 
