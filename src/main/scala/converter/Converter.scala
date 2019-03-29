@@ -7,6 +7,8 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql._
 import spray.json._
 import DefaultJsonProtocol._
+import org.apache.spark.sql.functions.udf
+import org.joda.time.DateTime
 
 
 object Converter {
@@ -40,4 +42,10 @@ object Converter {
     })
     mappedRdd
   }
+
+  val convertColumnTime = udf[Int, String](time => {
+    val sdf = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+    val tempo = new DateTime(sdf.parse(time))
+    tempo.getMinuteOfHour()
+  })
 }
