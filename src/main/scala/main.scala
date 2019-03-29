@@ -1,21 +1,14 @@
-import java.math.BigInteger
 
-import entity.Actor
+import entity.{Actor, MainParsed, Payload, Repo}
 import fileUtilities.{FileDownloader, FileExtractor}
-import org.apache.commons.configuration.ConfigurationFactory
-import org.apache.spark.SparkContext
+import operations.RDDOperation.{ActorOperations, CommitOperations}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.DataFrame
-import proprierties.Converter
-import persistence.ConnectionProvider
-import persistence.dao.ActorDaoImpl
 import properties.{ApplicationConfig, SparkConfig}
+import proprierties.{Converter, SaveCSV}
 import utility.{Paths, PropertyEnum}
-
 
 object main {
   def main(args: Array[String]): Unit = {
-
     ApplicationConfig.init(Paths.applicationConfigPath)
 
     SparkConfig.init(Paths.sparkConfigPath)
@@ -26,31 +19,34 @@ object main {
     val config = SparkConfig.instance()
 
     val filename = new FileDownloader().downloadWithRedirect("http://data.githubarchive.org/2018-03-01-0.json.gz")
+
+
     val fileExtractor = new FileExtractor
     val path = fileExtractor.extract(
       ApplicationConfig.instance().getProperty(PropertyEnum.downloadLocation) + filename,
       ApplicationConfig.instance().getProperty(PropertyEnum.jsonLocation) + cutExtensionFromFilename(filename) + "-" + System.currentTimeMillis() + ".json")
 
-    val strunzDF = Converter.ConvertJSONToDS(path, contex)
+
+    val strunzDS = Converter.ConvertJSONToDS(path, contex)
 
     val strunzRDD = Converter.ConvertJSONToRDD(path, contex)
 
+    /*
     val actorDF = ActorThings.getActorDS(strunzDF)
 
     val actorRDD = ActorThings.getActorRDD(strunzRDD)
-    // val actorNM = actorDF.select("id", "login")
 
+    SaveCSV.saveActorCsv(actorRDD)
 
+    val commitService = new CommitOperations[(String, String, Actor, Boolean, Repo, String, Payload)];
 
-    actorDF.write.csv(PropertyEnum.csvLocation + "actor")
-
-
+    val actorService = new ActorOperations[(String, String, Actor, Boolean, Repo, String, Payload)]
+      */
   }
 
   def cutExtensionFromFilename(filename: String): String = {
     val splittedFileName = filename.split("\\.")
     splittedFileName(0)
   }
-
 
 }
