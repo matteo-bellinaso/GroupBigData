@@ -1,14 +1,13 @@
-package operations.RDDOperation.DataframeOperation
-
+package operations.DataFrameOperation
 
 import converter.Converter
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.functions._
+import org.apache.spark.sql.hive.HiveContext
 
 
-class ActorOperation(sc: SparkContext) {
+class ActorDataFrameOperation(sc: SparkContext) {
 
 
   val hc = new HiveContext(sc)

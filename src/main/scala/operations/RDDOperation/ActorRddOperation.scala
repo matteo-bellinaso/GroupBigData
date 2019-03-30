@@ -6,7 +6,7 @@ import entity.{Actor, Repo}
 import org.apache.spark.rdd.RDD
 import org.joda.time.DateTime
 
-class ActorOperations[T] {
+class ActorRddOperation[T] {
 
   def getActorForHour(rdd: RDD[T]) = {
     val rdd1 = groupByTime(rdd)

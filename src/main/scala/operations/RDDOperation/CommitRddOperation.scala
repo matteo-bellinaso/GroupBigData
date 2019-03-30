@@ -4,7 +4,7 @@ import entity._
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Encoders
 
-class CommitOperations[T] {
+class CommitRddOperation[T] {
 
   // encoder per parsare la classe
   private val commitEncoder = Encoders.product[Commit]
@@ -23,7 +23,7 @@ class CommitOperations[T] {
   }
 
   def getCommitForActorAndType(rdd: RDD[T]) = {
-    val rdd1 = groupPerActorAndType(rdd);
+    val rdd1 = groupPerActorAndType(rdd)
     val reduced  = rdd1.reduceByKey((x,y) => (x+y))
     reduced
   }

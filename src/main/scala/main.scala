@@ -1,7 +1,7 @@
 import converter.Converter
 import entity.{Actor, Payload, Repo}
-import operations.DataFrameOperation.EventDataframeOperation
-import operations.RDDOperation.EventRddOperations
+import operations.DataFrameOperation.{CommitDataFrameOperation, EventDataframeOperation}
+import operations.RDDOperation.{CommitRddOperation, EventRddOperations}
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SparkSession
 import properties.{ApplicationConfig, SparkConfig}
@@ -28,10 +28,12 @@ object main {
 
     val path = "/Users/davidebelvedere/Documents/SparkLynx/GroupBigData3/src/archive/JSONFiles/2018-03-01-0-1553603303171.json"
 
-    val dataFrameFromJson = Converter.ConvertJSONToRDD(path, contex)
-    val eventOperation = new EventRddOperations[(String, String, Actor, Boolean, Repo, String, Payload)]()
-
-    eventOperation.findActorRepoAndHourMaxEvents(dataFrameFromJson)
+    val dataFrameFromJson = Converter.ConvertJSONToDF(path, contex)
+    //val eventOperation = new EventRddOperations[(String, String, Actor, Boolean, Repo, String, Payload)]()
+   // val commitOp = new CommitRddOperation[(String, String, Actor, Boolean, Repo, String, Payload)]
+   val commitOp= new CommitDataFrameOperation(sparkContext)
+   // println(s"ciao${commitOp.getCommitCountFromRDD(dataFrameFromJson)}")
+    commitOp.getCommitCountFromDF(dataFrameFromJson)
 
   }
 
