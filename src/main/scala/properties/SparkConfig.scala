@@ -3,12 +3,12 @@ package properties
 import java.io.{File, FileInputStream}
 import java.util.Properties
 
-import entity.ConnectionScala
 import org.apache.spark.SparkConf
+import org.apache.spark.sql.SparkSession
 
-class SparkConfig private(private val prop:Properties, private val propKey: java.util.Enumeration[_]) {
+class SparkConfig private(private val prop: Properties, private val propKey: java.util.Enumeration[_]) {
 
-  def setSparkConfiguration(): SparkConf = {
+  private def setSparkConfiguration(): SparkConf = {
     val sparkConf = new SparkConf()
 
     while (propKey.hasMoreElements) {
@@ -18,6 +18,11 @@ class SparkConfig private(private val prop:Properties, private val propKey: java
     }
     sparkConf
   }
+
+  def setSparkSession(): SparkSession = {
+    val sparkSession = SparkSession.builder().config(setSparkConfiguration()).getOrCreate()
+    sparkSession
+  }
 }
 
 
@@ -25,12 +30,11 @@ object SparkConfig {
   private var _instance: SparkConfig = _
 
   def init(path: String) = {
-    // "/Users/matteobellinaso/Desktop/lynx accademy/Big Data/GroupBigData/src/main/resources/databaseconnection.properties"
     val file = new File(path)
     val prop: Properties = new Properties()
     prop.load(new FileInputStream(file))
     val propKey = prop.keys()
-    _instance = new SparkConfig(prop,propKey)
+    _instance = new SparkConfig(prop, propKey)
   }
 
   def instance() = {
