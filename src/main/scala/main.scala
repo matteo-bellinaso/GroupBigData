@@ -26,14 +26,14 @@ object main {
         ApplicationConfig.instance().getProperty(PropertyEnum.downloadLocation) + filename,
         ApplicationConfig.instance().getProperty(PropertyEnum.jsonLocation) + cutExtensionFromFilename(filename) + "-" + System.currentTimeMillis() + ".json")*/
 
-    val path = "/Users/davidebelvedere/Documents/SparkLynx/GroupBigData3/src/archive/JSONFiles/2018-03-01-0-1553603303171.json"
+    val path = "/Users/matteobellinaso/Desktop/lynx_accademy/BigData/GroupBigData/downloadJson/2018-03-01-0-1553853054114.json"
 
     val dataFrameFromJson = Converter.ConvertJSONToDF(path, contex)
-    //val eventOperation = new EventRddOperations[(String, String, Actor, Boolean, Repo, String, Payload)]()
-   // val commitOp = new CommitRddOperation[(String, String, Actor, Boolean, Repo, String, Payload)]
-   val commitOp= new CommitDataFrameOperation(sparkContext)
-   // println(s"ciao${commitOp.getCommitCountFromRDD(dataFrameFromJson)}")
-    commitOp.getCommitCountFromDF(dataFrameFromJson)
+    val rddFromJson = Converter.ConvertJSONToRDD(path, contex)
+
+    val commitRDD = new CommitRddOperation[(String, String, Actor, Boolean, Repo, String, Payload)]
+    val commitOp = new CommitDataFrameOperation(sparkContext)
+
 
   }
 
