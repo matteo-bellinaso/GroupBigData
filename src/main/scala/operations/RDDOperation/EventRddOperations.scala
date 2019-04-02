@@ -32,10 +32,17 @@ class EventRddOperations[T] { //(mainParsed.id, mainParsed.`type`, mainParsed.ac
   def authorList(rdd: RDD[T]): RDD[(String, Author)] = {
     val commitsRdd = rdd.flatMap { case (_, _, _, _, _, _, payload: Payload) =>
       payload.commits
-    }
+    }.filter(x => x != null)
+
+
+    val collectedRdd= commitsRdd.collect
+    collectedRdd.foreach{case (commit: Commit)=>println(s"idAutoreeee: ${commit.sha} ")}
+
     val authorRdd = commitsRdd.map { case (commit: Commit) => (commit.author.name, commit.author)
     }.distinct()
 
+    val collectedRdd1= authorRdd.collect
+     collectedRdd1.foreach{case (name,_)=>println(s"idAutore: ${name} ")}
     authorRdd
   }
 
