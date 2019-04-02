@@ -12,7 +12,7 @@ import org.joda.time.DateTime
 object Converter {
 
 
-  private def convertJSONToDS(file: String, sc: SparkConf, sparkSession: SparkSession) = {
+  private def convertJSONToDS(file: String, sparkSession: SparkSession) = {
 
     val eventEncoder = Encoders.product[MainParsed]
 
@@ -27,14 +27,10 @@ object Converter {
     dsNoDuplicates
   }
 
-  private def createSparkSession(sc: SparkConf): SparkSession = {
-    val spark = SparkSession.builder().config(sc).getOrCreate()
-    spark
-  }
 
-  def ConvertJSONToDSToUse(file: String, sc: SparkConf) = {
-    val sparkSession = createSparkSession(sc)
-    val gettedDs = convertJSONToDS(file, sc, sparkSession)
+  def convertJSONToDSToUse(file: String, sparkSession: SparkSession) = {
+
+    val gettedDs = convertJSONToDS(file, sparkSession)
 
     import sparkSession.sqlContext.implicits._
     val mappedDs = gettedDs.map { mainParsed => {
@@ -43,16 +39,27 @@ object Converter {
     }
 
     mappedDs
+
   }
 
-  def ConvertJSONToDF(file: String, sc: SparkConf): DataFrame = {
-    val mainDS = convertJSONToDS(file, sc, createSparkSession(sc))
+ /* def convertDsToNamedDataframe(dataset: Dataset[(String, String, Actor, Boolean, Repo, String, Payload)]) = {
+    dataset.withColumnRenamed("_1","id")
+      .withColumnRenamed("_2","type")
+      .withColumnRenamed("_3","actor")
+      .withColumnRenamed("_4","publico")
+      .withColumnRenamed("_5","repo")
+      .withColumnRenamed("_6","created_at")
+      .withColumnRenamed("_7","payload")
+  }*/
+
+  def convertJSONToDF(file: String, sparkSession: SparkSession): DataFrame = {
+    val mainDS = convertJSONToDS(file, sparkSession)
     val mainDF = mainDS.toDF
     mainDF
   }
 
-  def ConvertJSONToRDD(file: String, sc: SparkConf): RDD[(String, String, Actor, Boolean, Repo, String, Payload)] = {
-    val mainDS = ConvertJSONToDSToUse(file, sc)
+  def convertJSONToRDD(file: String, sparkSession: SparkSession): RDD[(String, String, Actor, Boolean, Repo, String, Payload)] = {
+    val mainDS = convertJSONToDSToUse(file, sparkSession)
     val mainRDD = mainDS.rdd
     /*val mappedRdd = mainRDD.map(mainParsed => {
       (mainParsed.id, mainParsed.`type`, mainParsed.actor, mainParsed.publico, mainParsed.repo, mainParsed.created_at, mainParsed.payload)
