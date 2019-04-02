@@ -16,6 +16,7 @@ object SaveCSV  {
 
   def saveActorCsv(rdd: RDD[(String, Actor)]) = {
 
+    println(s"dio porco:  ${ApplicationConfig.instance().getProperty(PropertyEnum.csvLocation)}")
     val out = new BufferedWriter(new FileWriter(ApplicationConfig.instance().getProperty(PropertyEnum.csvLocation) + "actor.csv"))
     val writer = new CSVWriter(out)
     val actorSchema = Array("id", "login", "display_login", "gravatar_id", "url", "avatar_url")
@@ -33,6 +34,7 @@ object SaveCSV  {
   }
 
   def saveAuthorCsv(rdd: RDD[(String, Author)]) = {
+
 
     val out = new BufferedWriter(new FileWriter(ApplicationConfig.instance().getProperty(PropertyEnum.csvLocation) + "author.csv"))
     val writer = new CSVWriter(out)

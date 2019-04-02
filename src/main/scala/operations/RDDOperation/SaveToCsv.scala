@@ -1,53 +1,39 @@
 package operations.RDDOperation
 
-import java.text.SimpleDateFormat
-
 import entity._
 import org.apache.spark.rdd.RDD
-import org.joda.time.DateTime
+import proprierties.SaveCSV
 
-class EventRddOperations[T] { //(mainParsed.id, mainParsed.`type`, mainParsed.actor, mainParsed.publico, mainParsed.repo, mainParsed.created_at, mainParsed.payload)
+object SaveToCsv {
 
-  def actorList(rdd: RDD[T]): RDD[(String, Actor)] = {
-    val actorRdd = rdd.map { case (_, _, actor: Actor, _, _, _, _) =>
-      ("" + actor.id, actor)
-    }.distinct()
-    actorRdd
+  type T = (String, String, Actor, Boolean, Repo, String, Payload)
+
+  private val actorRddOperation = new ActorRddOperation[T]
+
+  private val eventRddOperations = new EventRddOperations[T]
+
+  private val commitRDD = new CommitRddOperation[T]
+
+  def csvActorList(rdd: RDD[T]) = {
+    SaveCSV.saveActorCsv(eventRddOperations.actorList(rdd))
   }
 
-  def repoList(rdd: RDD[T]): RDD[(String, Repo)] = {
-    val repoRdd = rdd.map { case (_, _, _, _, repo: Repo, _, _) =>
-      ("" + repo.id, repo)
-    }.distinct()
-    repoRdd
+  def csvRepoList(rdd: RDD[T]) = {
+    SaveCSV.saveRepoCsv(eventRddOperations.repoList(rdd))
   }
 
-  def typeList(rdd: RDD[T]): RDD[String] = {
-    val typeRdd = rdd.map { case (_, tipo: String, _, _, _, _, _) =>
-      tipo
-    }.distinct()
-    typeRdd
+  /* def typeList(rdd: RDD[T]) = {
+     val typeRdd = rdd.map { case (_, tipo: String, _, _, _, _, _) =>
+       tipo
+     }.distinct()
+     typeRdd
+   }*/
+
+  def csvAuthorList(rdd: RDD[T]) = {
+    SaveCSV.saveAuthorCsv(eventRddOperations.authorList(rdd))
   }
 
-  def authorList(rdd: RDD[T]): RDD[(String, Author)] = {
-    val commitsRdd = rdd.flatMap { case (_, _, _, _, _, _, payload: Payload) =>
-      payload.commits
-    }
-    val authorRdd = commitsRdd.map { case (commit: Commit) => (commit.author.name, commit.author)
-    }.distinct()
-
-    authorRdd
-  }
-
-  def countActor(rdd: RDD[T]): BigInt = {
-    actorList(rdd).count()
-  }
-
-  def countRepo(rdd: RDD[T]): BigInt = {
-    repoList(rdd).count()
-  }
-
-  def countEventPerActor(rdd: RDD[T]): RDD[(Actor, Int)] = {
+  /*def countEventPerActor(rdd: RDD[T]) = {
 
     val countedEventPerActor = groupPerActor(rdd)
       .map { case (actor: Actor, iterable: Iterable[_]) => (actor, iterable.size) }
@@ -182,54 +168,6 @@ class EventRddOperations[T] { //(mainParsed.id, mainParsed.`type`, mainParsed.ac
     finalRdd
   }
 
-
-  private def groupPerActor(rdd: RDD[T]): RDD[(Actor, scala.Iterable[T])]
-
-  = {
-    val grouppedRdd = rdd.groupBy { case (_, _, actor: Actor, _, _, _, _) => actor }
-    grouppedRdd
-  }
-
-  private def groupPerTypeAndActor(rdd: RDD[T]): RDD[((String, Actor), scala.Iterable[T])]
-
-  = {
-    val grouppedRdd = rdd.groupBy { case (_, tipo: String, actor: Actor, _, _, _, _) => (tipo, actor) }
-    grouppedRdd
-  }
-
-  private def groupPerTypeActorAndRepo(rdd: RDD[T]): RDD[((Actor, Repo, String), scala.Iterable[T])]
-
-  = {
-    val grouppedRdd = rdd.groupBy { case (_, tipo: String, actor: Actor, _, repo: Repo, _, _) => (actor, repo, tipo) }
-    grouppedRdd
-  }
-
-  private def groupByType(rdd: RDD[T]): RDD[(String, scala.Iterable[T])]
-
-  = {
-    val grouppedRdd = rdd.groupBy { case (_, tipo: String, _, _, _, _, _) => tipo }
-    grouppedRdd
-  }
-
-
-  private def groupPerActorRepoAndHour(rdd: RDD[T])
-
-  = {
-    val mappedRdd = rdd.map { case (id: String, tipo: String, actor: Actor, pubblico: Boolean, repo: Repo, created_at: String, payload: Payload) =>
-      val input = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-      val date = new DateTime(input.parse(created_at))
-      (id, tipo, actor, pubblico, repo, date.getMinuteOfHour(), payload)
-    }
-    val grouppedRdd = mappedRdd.groupBy { case (_, _, actor: Actor, _, repo: Repo, hours: Int, _) => (actor, repo, hours) }
-    grouppedRdd
-  }
-
-  private def groupByRepo(rdd: RDD[T]): RDD[(Repo, scala.Iterable[T])]
-
-  = {
-    val grouppedRdd = rdd.groupBy { case (_, _, _, _, repo: Repo, _, _) => repo }
-    grouppedRdd
-  }
-
+*/
 
 }

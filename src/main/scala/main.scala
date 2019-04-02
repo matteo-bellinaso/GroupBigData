@@ -25,7 +25,7 @@ object main {
         ApplicationConfig.instance().getProperty(PropertyEnum.downloadLocation) + filename,
         ApplicationConfig.instance().getProperty(PropertyEnum.jsonLocation) + cutExtensionFromFilename(filename) + "-" + System.currentTimeMillis() + ".json")*/
 
-    val path = "/Users/matteobellinaso/Desktop/lynx_accademy/BigData/GroupBigData/downloadJson/2018-03-01-0-1553853054114.json"
+    val path = "/Users/davidebelvedere/Documents/SparkLynx/GroupBigData3/src/archive/JSONFiles/2018-03-01-0-1554043115539.json"
 
 
     val commitRDD = new CommitRddOperation[(String, String, Actor, Boolean, Repo, String, Payload)]

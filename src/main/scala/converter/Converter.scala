@@ -73,6 +73,10 @@ object Converter {
     tempo.getMinuteOfHour()
   })
 
+  def cutExtensionFromFilename(filename: String): String = {
+    val splittedFileName = filename.split("\\.")
+    splittedFileName(0)
+  }
 
   // prova per creare un DF dato un RDD di Row dove gli passo la struttura creata apposta per entity.commit
   def createDF(sc: SparkConf, rdd: RDD[Row], struct: StructType) = {
