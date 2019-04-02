@@ -19,7 +19,7 @@ object SaveToCsv {
   }
 
   def csvRepoList(rdd: RDD[T]) = {
-    SaveCSV.saveRepoCsv(eventRddOperations.repoList(rdd))
+    SaveCSV.saveRepoCsv(eventRddOperations.repoList(rdd).filter(x => x._1 != null))
   }
 
   /* def typeList(rdd: RDD[T]) = {
@@ -30,32 +30,17 @@ object SaveToCsv {
    }*/
 
   def csvAuthorList(rdd: RDD[T]) = {
-    SaveCSV.saveAuthorCsv(eventRddOperations.authorList(rdd))
+    SaveCSV.saveAuthorCsv(eventRddOperations.authorList(rdd).filter(x => x._1 != null))
   }
 
-  /*def countEventPerActor(rdd: RDD[T]) = {
-
-    val countedEventPerActor = groupPerActor(rdd)
-      .map { case (actor: Actor, iterable: Iterable[_]) => (actor, iterable.size) }
-    /*val collectedRdd= countedEventPerActor.collect
-     collectedRdd.foreach{case (actor: Actor,numero)=>println(s"idAttore: ${actor.id} --> eventi: ${numero} ")}*/
-
-    countedEventPerActor
-
+  def csvCountEventPerActor(rdd: RDD[T]) = {
+    SaveCSV.saveCountEventPerActorCsv(eventRddOperations.countEventPerActor(rdd).filter(x => x._1 != null))
   }
 
-  def countEventPerType(rdd: RDD[T]): RDD[(String, Int)] = {
-
-    val countedEventPerActor = groupByType(rdd)
-      .map { case (tipo: String, iterable: Iterable[_]) => (tipo, iterable.size) }
-
-    /* val collectedRdd = countedEventPerActor.collect
-     collectedRdd.foreach { case (tipo: String, numero) => println(s"idAttore: ${tipo} --> eventi: ${numero} ") }*/
-
-    countedEventPerActor
-
+  def csvCountEventPerType(rdd: RDD[T]) = {
+    SaveCSV.saveCountEventPerTypeCsv(eventRddOperations.countEventPerType(rdd).filter(x => x._1 != null))
   }
-
+/*
   def counEventPerTypeAndActor(rdd: RDD[T]): //Unit ={
   RDD[((String, Actor), Int)] = {
 

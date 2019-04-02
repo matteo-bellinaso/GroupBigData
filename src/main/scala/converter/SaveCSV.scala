@@ -11,7 +11,7 @@ import org.apache.spark.rdd.RDD
 import properties.ApplicationConfig
 
 
-object SaveCSV  {
+object SaveCSV {
 
 
   def saveActorCsv(rdd: RDD[(String, Actor)]) = {
@@ -22,26 +22,25 @@ object SaveCSV  {
     val actorSchema = Array("id", "login", "display_login", "gravatar_id", "url", "avatar_url")
 
     val finalArr: java.util.List[Array[String]] = new util.ArrayList()
-    finalArr.add( actorSchema)
+    finalArr.add(actorSchema)
 
-    rdd.collect.foreach{ case (_ , row)=>{
+    rdd.collect.foreach { case (_, row) => {
       val arr = Array(row.id.toString(), row.login, row.display_login, row.gravatar_id, row.url, row.avatar_url)
       finalArr.add(arr)
-      }
+    }
     }
     writer.writeAll(finalArr)
     out.close()
   }
 
   def saveAuthorCsv(rdd: RDD[(String, Author)]) = {
-
-
-    val out = new BufferedWriter(new FileWriter(ApplicationConfig.instance().getProperty(PropertyEnum.csvLocation) + "author.csv"))
+    rdd.collect.foreach(z => println(s"name ${println(z._1)}"))
+    /*val out = new BufferedWriter(new FileWriter(ApplicationConfig.instance().getProperty(PropertyEnum.csvLocation) + "author.csv"))
     val writer = new CSVWriter(out)
-    val actorSchema = Array("name", "email")
+    val authorSchema = Array("name", "email")
 
     val finalArr: java.util.List[Array[String]] = new util.ArrayList()
-    finalArr.add( actorSchema)
+    finalArr.add( authorSchema)
 
     rdd.collect.foreach{ case (_ , row)=>{
       val arr = Array(row.name, row.email)
@@ -49,20 +48,54 @@ object SaveCSV  {
     }
     }
     writer.writeAll(finalArr)
-    out.close()
+    out.close()*/
   }
 
   def saveRepoCsv(rdd: RDD[(String, Repo)]) = {
 
     val out = new BufferedWriter(new FileWriter(ApplicationConfig.instance().getProperty(PropertyEnum.csvLocation) + "repo.csv"))
     val writer = new CSVWriter(out)
-    val actorSchema = Array("id", "name", "url")
+    val repoSchema = Array("id", "name", "url")
 
     val finalArr: java.util.List[Array[String]] = new util.ArrayList()
-    finalArr.add( actorSchema)
+    finalArr.add(repoSchema)
 
-    rdd.collect.foreach{ case (_ , row)=>{
+    rdd.collect.foreach { case (_, row) => {
       val arr = Array(row.id.toString(), row.name, row.url)
+      finalArr.add(arr)
+    }
+    }
+    writer.writeAll(finalArr)
+    out.close()
+  }
+
+  def saveCountEventPerActorCsv(rdd: RDD[(Actor, Int)]): Unit = {
+    val out = new BufferedWriter(new FileWriter(ApplicationConfig.instance().getProperty(PropertyEnum.csvLocation) + "actorCount.csv"))
+    val writer = new CSVWriter(out)
+    val actorSchema = Array("(id", "login", "display_login", "gravatar_id", "url", "avatar_url)", "count")
+
+    val finalArr: java.util.List[Array[String]] = new util.ArrayList()
+    finalArr.add(actorSchema)
+
+    rdd.collect.foreach { case (actor, count) => {
+      val arr = Array("(" + actor.id.toString(), actor.login, actor.display_login, actor.gravatar_id, actor.url, actor.avatar_url + ")", count.toString)
+      finalArr.add(arr)
+    }
+    }
+    writer.writeAll(finalArr)
+    out.close()
+  }
+
+  def saveCountEventPerTypeCsv(rdd: RDD[(String, Int)]): Unit = {
+    val out = new BufferedWriter(new FileWriter(ApplicationConfig.instance().getProperty(PropertyEnum.csvLocation) + "typeCount.csv"))
+    val writer = new CSVWriter(out)
+    val actorSchema = Array("type", "count")
+
+    val finalArr: java.util.List[Array[String]] = new util.ArrayList()
+    finalArr.add(actorSchema)
+
+    rdd.collect.foreach { case (tipo, count) => {
+      val arr = Array(tipo, count.toString)
       finalArr.add(arr)
     }
     }

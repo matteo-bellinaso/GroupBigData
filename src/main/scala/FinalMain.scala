@@ -1,5 +1,6 @@
 import converter.Converter
-import operations.RDDOperation.SaveToCsv
+import entity.{Actor, Payload, Repo}
+import operations.RDDOperation.{EventRddOperations, SaveToCsv}
 import properties.{ApplicationConfig, SparkConfig}
 import utility.Paths
 
@@ -7,6 +8,7 @@ object FinalMain {
 
   def main(args: Array[String]): Unit = {
 
+   // val path2= Paths.applicationConfigPath
     ApplicationConfig.init(Paths.applicationConfigPath)
 
     SparkConfig.init(Paths.sparkConfigPath)
@@ -25,12 +27,18 @@ object FinalMain {
 
     val rddFromJson = Converter.convertJSONToRDD(path, sparkSession)
 
-    SaveToCsv.csvActorList(rddFromJson)
+    //SaveToCsv.csvActorList(rddFromJson)
 
-   // SaveToCsv.csvRepoList(rddFromJson)
+    //SaveToCsv.csvRepoList(rddFromJson)
 
-    //SaveToCsv.csvAuthorList(rddFromJson)
+   // SaveToCsv.csvAuthorList(rddFromJson)
 
+   // SaveToCsv.csvCountEventPerActor(rddFromJson)
+    SaveToCsv.csvCountEventPerType(rddFromJson)
+
+    /* val eventRddOperations = new EventRddOperations[(String, String, Actor, Boolean, Repo, String, Payload)]
+
+    eventRddOperations.authorList(rddFromJson)*/
 
 
   }
