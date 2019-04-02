@@ -74,10 +74,4 @@ object Converter {
   })
 
 
-  // prova per creare un DF dato un RDD di Row dove gli passo la struttura creata apposta per entity.commit
-  def createDF(sc: SparkConf, rdd: RDD[Row], struct: StructType) = {
-    val spark = SparkSession.builder().config(sc).getOrCreate()
-    val df = spark.createDataFrame(rdd, struct)
-    df
-  }
 }
