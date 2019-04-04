@@ -40,119 +40,132 @@ object SaveToCsv {
   def csvCountEventPerType(rdd: RDD[T]) = {
     SaveCSV.saveCountEventPerTypeCsv(eventRddOperations.countEventPerType(rdd).filter(x => x._1 != null))
   }
-/*
-  def counEventPerTypeAndActor(rdd: RDD[T]): //Unit ={
-  RDD[((String, Actor), Int)] = {
 
-    val rddToReturn = groupPerTypeAndActor(rdd).map { case ((tipo: String, actor: Actor), iterable: Iterable[T]) => ((tipo, actor), iterable.size) }
-
-    /*val collectedRdd= rddToReturn.collect
-    collectedRdd.foreach{case ((tipo,actor: Actor),numero)=>println(s"idAttore: ${actor.id}, tipo: ${tipo} --> eventi: ${numero} ")}*/
-
-    rddToReturn
+  def csvCommitPerActor(rdd: RDD[T]) = {
+    SaveCSV.saveCommitForActor(commitRDD.getCommitForActor(rdd).filter(x => x._1 != null))
   }
 
-  def counEventPerRepo(rdd: RDD[T]): //Unit ={
-  RDD[(Repo, Int)] = {
-
-    val rddToReturn = groupByRepo(rdd).map { case (repo: Repo, iterable: Iterable[T]) => (repo, iterable.size) }
-
-    /*val collectedRdd = rddToReturn.collect
-    collectedRdd.foreach { case (repo: Repo, numero) => println(s"repo: Repo: ${repo.id}, --> eventi: ${numero} ") }
-*/
-    rddToReturn
+  def csvCommitPerActorType(rdd: RDD[T]) = {
+    SaveCSV.saveCommitForActorAndType(commitRDD.getCommitForActorAndType(rdd).filter(x => x._1 != null))
   }
 
-
-  def countEventPerTypeActorAndRepo(rdd: RDD[T]): //Unit ={
-  RDD[((String, Actor, Repo), Int)] = {
-
-    val rddToReturn = groupPerTypeActorAndRepo(rdd).map { case ((actor: Actor, repo: Repo, tipo: String), iterable: Iterable[T]) => ((tipo, actor, repo), iterable.size) }
-
-    /*val collectedRdd = rddToReturn.collect
-    collectedRdd.foreach { case ((tipo, actor: Actor, repo: Repo), numero) => println(s"idAttore: ${actor.id}, tipo: ${tipo}, idRepo ${repo.id} --> eventi: ${numero} ") }
-*/
-    rddToReturn
+  def csvCommitPerHour(rdd: RDD[T]) = {
+    SaveCSV.saveCommitForHour(commitRDD.getMaxCommitPerHour(rdd).filter(x => x._1 != null))
   }
 
-  def findActorWithMaxEvents(rdd: RDD[T]): RDD[(Actor, Int)] = {
-    val gettedRdd = countEventPerActor(rdd)
-    val actorWithMaxEvents = gettedRdd.reduce((x, y) => {
-      if (x._2 > y._2) {
-        x
-      } else y
-    })
+  /*
+    def counEventPerTypeAndActor(rdd: RDD[T]): //Unit ={
+    RDD[((String, Actor), Int)] = {
 
-    val finalRdd = gettedRdd.filter { case (actor: Actor, numero) =>
-      numero == actorWithMaxEvents._2
+      val rddToReturn = groupPerTypeAndActor(rdd).map { case ((tipo: String, actor: Actor), iterable: Iterable[T]) => ((tipo, actor), iterable.size) }
+
+      /*val collectedRdd= rddToReturn.collect
+      collectedRdd.foreach{case ((tipo,actor: Actor),numero)=>println(s"idAttore: ${actor.id}, tipo: ${tipo} --> eventi: ${numero} ")}*/
+
+      rddToReturn
     }
 
-    /* val collectedRdd = finalRdd.collect
-     collectedRdd.foreach { case (actor: Actor, numero) => println(s"idAttore: ${actor.id}, --> eventi: ${numero} ") }*/
+    def counEventPerRepo(rdd: RDD[T]): //Unit ={
+    RDD[(Repo, Int)] = {
 
+      val rddToReturn = groupByRepo(rdd).map { case (repo: Repo, iterable: Iterable[T]) => (repo, iterable.size) }
 
-    finalRdd
-  }
-
-  def findActorWithMinEvents(rdd: RDD[T]): RDD[(Actor, Int)] = {
-    val gettedRdd = countEventPerActor(rdd)
-    val actorWithMaxEvents = gettedRdd.reduce((x, y) => {
-      if (x._2 < y._2) {
-        x
-      } else y
-    })
-
-    val finalRdd = gettedRdd.filter { case (actor: Actor, numero) =>
-      numero == actorWithMaxEvents._2
+      /*val collectedRdd = rddToReturn.collect
+      collectedRdd.foreach { case (repo: Repo, numero) => println(s"repo: Repo: ${repo.id}, --> eventi: ${numero} ") }
+  */
+      rddToReturn
     }
 
-    /* val collectedRdd = finalRdd.collect
-     collectedRdd.foreach { case (actor: Actor, numero) => println(s"idAttore: ${actor.id}, --> eventi: ${numero} ") }*/
 
+    def countEventPerTypeActorAndRepo(rdd: RDD[T]): //Unit ={
+    RDD[((String, Actor, Repo), Int)] = {
 
-    finalRdd
-  }
+      val rddToReturn = groupPerTypeActorAndRepo(rdd).map { case ((actor: Actor, repo: Repo, tipo: String), iterable: Iterable[T]) => ((tipo, actor, repo), iterable.size) }
 
-  def findActorRepoAndHourMinEvents(rdd: RDD[T]): RDD[((Actor, Repo, Int), Int)] = {
-    val gettedRdd = groupPerActorRepoAndHour(rdd)
-    val mappedRdd = gettedRdd.map { case ((actor: Actor, repo: Repo, ora), iterable: Iterable[T]) => ((actor, repo, ora), iterable.size) }
-    val actorRepoAndHourWithMaxEvents = mappedRdd.reduce((x, y) => {
-      if (x._2 < y._2) {
-        x
-      } else y
-    })
-
-    val finalRdd = mappedRdd.filter { case (_, numero) =>
-      numero == actorRepoAndHourWithMaxEvents._2
+      /*val collectedRdd = rddToReturn.collect
+      collectedRdd.foreach { case ((tipo, actor: Actor, repo: Repo), numero) => println(s"idAttore: ${actor.id}, tipo: ${tipo}, idRepo ${repo.id} --> eventi: ${numero} ") }
+  */
+      rddToReturn
     }
 
-    /*val collectedRdd = finalRdd.collect
-     collectedRdd.foreach { case ((actor: Actor,repo: Repo,ora:Int), numero) => println(s"idAttore: ${actor.id}, idrepo ${repo.id}, ora ${ora}--> eventi: ${numero} ") }
-*/
+    def findActorWithMaxEvents(rdd: RDD[T]): RDD[(Actor, Int)] = {
+      val gettedRdd = countEventPerActor(rdd)
+      val actorWithMaxEvents = gettedRdd.reduce((x, y) => {
+        if (x._2 > y._2) {
+          x
+        } else y
+      })
 
-    finalRdd
-  }
+      val finalRdd = gettedRdd.filter { case (actor: Actor, numero) =>
+        numero == actorWithMaxEvents._2
+      }
 
-  def findActorRepoAndHourMaxEvents(rdd: RDD[T]): RDD[((Actor, Repo, Int), Int)] = {
-    val gettedRdd = groupPerActorRepoAndHour(rdd)
-    val mappedRdd = gettedRdd.map { case ((actor: Actor, repo: Repo, ora), iterable: Iterable[T]) => ((actor, repo, ora), iterable.size) }
-    val actorRepoAndHourWithMaxEvents = mappedRdd.reduce((x, y) => {
-      if (x._2 > y._2) {
-        x
-      } else y
-    })
+      /* val collectedRdd = finalRdd.collect
+       collectedRdd.foreach { case (actor: Actor, numero) => println(s"idAttore: ${actor.id}, --> eventi: ${numero} ") }*/
 
-    val finalRdd = mappedRdd.filter { case (_, numero) =>
-      numero == actorRepoAndHourWithMaxEvents._2
+
+      finalRdd
     }
 
-    /*val collectedRdd = finalRdd.collect
-    collectedRdd.foreach { case ((actor: Actor,repo: Repo,ora:Int), numero) => println(s"idAttore: ${actor.id}, idrepo ${repo.id}, ora ${ora}--> eventi: ${numero} ") }
-*/
+    def findActorWithMinEvents(rdd: RDD[T]): RDD[(Actor, Int)] = {
+      val gettedRdd = countEventPerActor(rdd)
+      val actorWithMaxEvents = gettedRdd.reduce((x, y) => {
+        if (x._2 < y._2) {
+          x
+        } else y
+      })
 
-    finalRdd
-  }
+      val finalRdd = gettedRdd.filter { case (actor: Actor, numero) =>
+        numero == actorWithMaxEvents._2
+      }
 
-*/
+      /* val collectedRdd = finalRdd.collect
+       collectedRdd.foreach { case (actor: Actor, numero) => println(s"idAttore: ${actor.id}, --> eventi: ${numero} ") }*/
+
+
+      finalRdd
+    }
+
+    def findActorRepoAndHourMinEvents(rdd: RDD[T]): RDD[((Actor, Repo, Int), Int)] = {
+      val gettedRdd = groupPerActorRepoAndHour(rdd)
+      val mappedRdd = gettedRdd.map { case ((actor: Actor, repo: Repo, ora), iterable: Iterable[T]) => ((actor, repo, ora), iterable.size) }
+      val actorRepoAndHourWithMaxEvents = mappedRdd.reduce((x, y) => {
+        if (x._2 < y._2) {
+          x
+        } else y
+      })
+
+      val finalRdd = mappedRdd.filter { case (_, numero) =>
+        numero == actorRepoAndHourWithMaxEvents._2
+      }
+
+      /*val collectedRdd = finalRdd.collect
+       collectedRdd.foreach { case ((actor: Actor,repo: Repo,ora:Int), numero) => println(s"idAttore: ${actor.id}, idrepo ${repo.id}, ora ${ora}--> eventi: ${numero} ") }
+  */
+
+      finalRdd
+    }
+
+    def findActorRepoAndHourMaxEvents(rdd: RDD[T]): RDD[((Actor, Repo, Int), Int)] = {
+      val gettedRdd = groupPerActorRepoAndHour(rdd)
+      val mappedRdd = gettedRdd.map { case ((actor: Actor, repo: Repo, ora), iterable: Iterable[T]) => ((actor, repo, ora), iterable.size) }
+      val actorRepoAndHourWithMaxEvents = mappedRdd.reduce((x, y) => {
+        if (x._2 > y._2) {
+          x
+        } else y
+      })
+
+      val finalRdd = mappedRdd.filter { case (_, numero) =>
+        numero == actorRepoAndHourWithMaxEvents._2
+      }
+
+      /*val collectedRdd = finalRdd.collect
+      collectedRdd.foreach { case ((actor: Actor,repo: Repo,ora:Int), numero) => println(s"idAttore: ${actor.id}, idrepo ${repo.id}, ora ${ora}--> eventi: ${numero} ") }
+  */
+
+      finalRdd
+    }
+
+  */
 
 }
