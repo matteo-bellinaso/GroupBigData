@@ -1,9 +1,8 @@
 import converter.Converter
 import entity.{Actor, Payload, Repo}
-import operations.DataFrameOperation.EventDataframeOperation
+import operations.DataFrameOperation.{EventDataframeOperation, SaveToPostgres}
 import operations.DataSetOperations.EventDataSetOperation
 import operations.RDDOperation.EventRddOperations
-import operations.SaveToPostgres
 import org.apache.spark.sql.SparkSession
 import properties.{ApplicationConfig, SparkConfig}
 import utility.Paths
@@ -19,6 +18,8 @@ object FinalMain {
 
 
     implicit val sparkSession: SparkSession = SparkConfig.instance().setSparkSession()
+
+    sparkSession.sparkContext.setLogLevel("ERROR")
 
 
     /*val filename = new FileDownloader().downloadWithRedirect("http://data.githubarchive.org/" + ApplicationConfig.instance().getProperty(PropertyEnum.date) + "-" + ApplicationConfig.instance().getProperty(PropertyEnum.hour) + ".json.gz")
