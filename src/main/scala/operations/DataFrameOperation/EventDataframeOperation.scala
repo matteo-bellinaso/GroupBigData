@@ -1,22 +1,48 @@
 package operations.DataFrameOperation
 
 import converter.Converter
-import entity.{Actor, Repo}
-import org.apache.spark.SparkContext
-import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 class EventDataframeOperation(implicit sparkSession: SparkSession) {
 
 
   import sparkSession.implicits._
 
+
+  def actorList(dataframe: DataFrame) = {
+    val actorDf = dataframe.select($"actor.id", $"actor").distinct().toDF()
+
+    actorDf
+  }
+
+  def repoList(dataframe: DataFrame) = {
+    val repoDf = dataframe.select($"repo.id", $"repo").distinct().toDF()
+    repoDf
+  }
+
+  def typeList(dataframe: DataFrame) = {
+    val typeDf = dataframe.select("type").distinct().toDF()
+    typeDf
+  }
+
+
+  def authorList(dataframe: DataFrame) = {
+
+    val commitsSeqDf = dataframe.filter("payload is not null  and payload.commits is not null ")
+
+    val authorExploded = commitsSeqDf.select(explode(col("payload.commits.author")).as("author"))
+     .select("author.email","author").distinct().toDF()
+
+  //  authorExploded.show(100000)
+    authorExploded
+  }
+
+
   def countEventPerActor(dataFrame: DataFrame) = {
     val selectedFields = dataFrame.select($"id", $"actor.id".alias("idAttore"))
     val grouppedPerActor = selectedFields.groupBy("idAttore")
-    //grouppedPerActor.count().show(100000)
+    // grouppedPerActor.count().show(100000)
     grouppedPerActor.count()
   }
 
@@ -73,7 +99,7 @@ class EventDataframeOperation(implicit sparkSession: SparkSession) {
     val grouppedDf = selectedDf.groupBy("idAttore", "idRepo", "time").count()
     val minimo = grouppedDf.agg(min("count").alias("conteggio"))
 
-    val grouppedDfWithCount = minimo.join(grouppedDf, minimo("conteggio") === grouppedDf("count")).select("idAttore","idRepo","time", "conteggio")
+    val grouppedDfWithCount = minimo.join(grouppedDf, minimo("conteggio") === grouppedDf("count")).select("idAttore", "idRepo", "time", "conteggio")
     //grouppedDfWithCount.show(5000)
     grouppedDfWithCount
   }
@@ -84,7 +110,7 @@ class EventDataframeOperation(implicit sparkSession: SparkSession) {
     val grouppedDf = selectedDf.groupBy("idAttore", "idRepo", "time").count()
     val massimo = grouppedDf.agg(max("count").alias("conteggio"))
 
-    val grouppedDfWithCount = massimo.join(grouppedDf, massimo("conteggio") === grouppedDf("count")).select("idAttore","idRepo","time", "conteggio")
+    val grouppedDfWithCount = massimo.join(grouppedDf, massimo("conteggio") === grouppedDf("count")).select("idAttore", "idRepo", "time", "conteggio")
     grouppedDfWithCount.show()
     grouppedDfWithCount
   }

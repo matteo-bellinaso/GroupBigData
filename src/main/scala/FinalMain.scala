@@ -1,12 +1,12 @@
 import converter.Converter
 import entity.{Actor, Payload, Repo}
-import fileUtilities.{FileDownloader, FileExtractor}
 import operations.DataFrameOperation.EventDataframeOperation
-import operations.RDDOperation.{EventRddOperations, SaveToCsv}
 import operations.DataSetOperations.EventDataSetOperation
+import operations.RDDOperation.EventRddOperations
+import operations.SaveToPostgres
 import org.apache.spark.sql.SparkSession
 import properties.{ApplicationConfig, SparkConfig}
-import utility.{Paths, PropertyEnum}
+import utility.Paths
 
 object FinalMain {
 
@@ -33,20 +33,17 @@ object FinalMain {
 
     val dataframeFromJson = Converter.convertJSONToDF(path, sparkSession)
 
-    val eventDsOp = new EventDataSetOperation[(String, String, Actor, Boolean, Repo, String, Payload)](sparkSession)
+    val dsFromJson = Converter.convertJSONToDSToUse(path, sparkSession)
+
+    val eventDsOp = new EventDataSetOperation[(String, String, Actor, Boolean, Repo, String, Payload)]
 
     val eventDfOp = new EventDataframeOperation
 
-    ApplicationConfig.instance().getProperty(PropertyEnum.downloadLocation) + filename,
+    val eventRDDOp = new EventRddOperations[(String, String, Actor, Boolean, Repo, String, Payload)]
 
+    //eventDfOp.authorList(dataframeFromJson)
 
-    eventDfOp.countEventPerActor(dataframeFromJson)
-      .write
-      .jdbc("","",)
-
-    val eventRDDOp = new EventRddOperations[(String, String, Actor, Boolean, Repo, String, Payload)]()
-
-   // eventRDDOp.countEventPerTypeActorAndRepo(rddFromJson)
+    // eventRDDOp.countEventPerTypeActorAndRepo(rddFromJson)
 
     //SaveToCsv.csvActorList(rddFromJson)
 
@@ -62,11 +59,19 @@ object FinalMain {
     //SaveToCsv.csvCountEventPerRepo(rddFromJson)
 
     //SaveToCsv.csvCountEventPerTypeActorAndRepo(rddFromJson)
-    // SaveToCsv.csvFindActorWithMaxEvents(rddFromJson)
+    //SaveToCsv.csvFindActorWithMaxEvents(rddFromJson)
     // SaveToCsv.csvFindActorWithMinEvents(rddFromJson)
     //SaveToCsv.csvFindActorRepoAndHourWithMaxEvents(rddFromJson)
     // SaveToCsv.csvFindActorRepoAndHourWithMinEvents(rddFromJson)
 
+    /*Salvataggio su postgres
+
+    SaveToPostgres.saveActorOnPostgres(eventDfOp.actorList(dataframeFromJson))
+    SaveToPostgres.saveAuthorOnPostgres(eventDfOp.authorList(dataframeFromJson))
+    SaveToPostgres.saveRepoOnPostgres(eventDfOp.repoList(dataframeFromJson))
+    SaveToPostgres.saveTypeOnPostgres(eventDfOp.typeList(dataframeFromJson))
+
+    */
 
   }
 

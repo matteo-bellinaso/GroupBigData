@@ -10,7 +10,7 @@ import utility.{Paths, PropertyEnum}
 object main {
   def main(args: Array[String]): Unit = {
 
-    ApplicationConfig.init(Paths.applicationConfigPath)
+    /*ApplicationConfig.init(Paths.applicationConfigPath)
 
     SparkConfig.init(Paths.sparkConfigPath)
 
@@ -47,5 +47,6 @@ object main {
     val splittedFileName = filename.split("\\.")
     splittedFileName(0)
   }
-
+*/
+  }
 }

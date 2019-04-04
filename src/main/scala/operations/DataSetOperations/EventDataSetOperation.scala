@@ -2,15 +2,15 @@ package operations.DataSetOperations
 
 import java.text.SimpleDateFormat
 
-import converter.Converter
 import entity._
 import org.apache.spark.sql.{Dataset, SparkSession}
 import org.joda.time.DateTime
 
 
-class EventDataSetOperation[T](sparkSession: SparkSession) {
+class EventDataSetOperation[T](implicit sparkSession: SparkSession) {
 
   import sparkSession.implicits._
+
 
   def actorList(dataset: Dataset[T]): Dataset[(String, Actor)] = {
     val actorDataset = dataset.map { case (_, _, actor: Actor, _, _, _, _) =>
@@ -36,14 +36,14 @@ class EventDataSetOperation[T](sparkSession: SparkSession) {
 
   def authorList(dataset: Dataset[T]): Dataset[(String, Author)] = {
 
-    val commitsDataset=dataset.filter("_7 != null && _7.commits != null && _7.").flatMap { case (_, _, _, _, _, _, payload: Payload) =>
-      payload.commits
-    }
+    val commitsDataset = dataset.filter("_7 is not null  and _7.commits is not null ")
+      .flatMap { case (_, _, _, _, _, _, payload: Payload) =>
+        payload.commits
+      }
 
 
     val authorDataset = commitsDataset.map { case (commit: Commit) => (commit.author.name, commit.author)
     }.distinct()
-
     authorDataset
   }
 
@@ -191,7 +191,7 @@ class EventDataSetOperation[T](sparkSession: SparkSession) {
     }
     val grouppedDataframe = mappedDataset.groupBy("_3", "_5", "_6").count() //actor,repo,hours
 
-    grouppedDataframe.as[(Actor, Repo, BigInt, BigInt)].map{case ( actor: Actor, repo: Repo,ora: BigInt, numero:BigInt) => ((actor,repo,ora),numero)}
+    grouppedDataframe.as[(Actor, Repo, BigInt, BigInt)].map { case (actor: Actor, repo: Repo, ora: BigInt, numero: BigInt) => ((actor, repo, ora), numero) }
   }
 
 }

@@ -1,17 +1,14 @@
 package operations.DataFrameOperation
 
 import converter.Converter
-import org.apache.spark.SparkContext
-import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 
-class ActorDataFrameOperation(sc: SparkContext) {
+class ActorDataFrameOperation(sparkSession: SparkSession) {
 
 
-  val hc = new HiveContext(sc)
-  import hc.implicits._
+  import sparkSession.implicits._
 
   def getActorActiveForHour(dataframe: DataFrame) = {
     val time = dataframe.withColumn("time", Converter.convertColumnTime($"created_at"))

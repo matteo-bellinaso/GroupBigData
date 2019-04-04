@@ -3,7 +3,7 @@ package operations.DataFrameOperation
 import converter.Converter
 import entity.{Author, Commit}
 import io.netty.util.Version
-import org.apache.spark.sql.{DataFrame, Row}
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.types._
@@ -12,11 +12,11 @@ import org.apache.spark.sql.functions._
 
 import scala.collection.mutable
 
-class CommitDataFrameOperation(sc: SparkContext) {
+class CommitDataFrameOperation(implicit sparkSession:SparkSession) {
 
-  val hc = new HiveContext(sc)
 
-  import hc.implicits._
+
+  import sparkSession.implicits._
 
 
   def getCommitCountFromDF(dataFrame: DataFrame) = {
@@ -48,9 +48,9 @@ class CommitDataFrameOperation(sc: SparkContext) {
     val filtered = df.filter("commits is not null")
     val time = filtered.withColumn("time", Converter.convertColumnTime($"created_at")).withColumn("size", size($"commits"))
     val finalDF = time.groupBy("time").agg(sum("size").as("tot"))
-    val max = finalDF.withColumn("max", max($"tot"))
+    val maxDF = finalDF.withColumn("max", max($"tot"))
 
-    val joined = finalDF.join(max, finalDF("tot") === max("max")).select("*")
+    val joined = finalDF.join(maxDF, finalDF("tot") === max("max")).select("*")
     joined
 
   }

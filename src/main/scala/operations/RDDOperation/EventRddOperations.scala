@@ -187,9 +187,7 @@ class EventRddOperations[T] { //(mainParsed.id, mainParsed.`type`, mainParsed.ac
   }
 
 
-  private def groupPerActor(rdd: RDD[T]): RDD[(Actor, scala.Iterable[T])]
-
-  = {
+  private def groupPerActor(rdd: RDD[T]): RDD[(Actor, scala.Iterable[T])] = {
     val grouppedRdd = rdd.groupBy { case (_, _, actor: Actor, _, _, _, _) => actor }
     grouppedRdd
   }
