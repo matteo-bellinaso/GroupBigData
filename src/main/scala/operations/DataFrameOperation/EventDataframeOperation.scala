@@ -4,15 +4,14 @@ import converter.Converter
 import entity.{Actor, Repo}
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.hive.HiveContext
 
-class EventDataframeOperation(sc: SparkContext) {
+class EventDataframeOperation(implicit sparkSession: SparkSession) {
 
-  val hiveContext = new HiveContext(sc)
 
-  import hiveContext.implicits._
+  import sparkSession.implicits._
 
   def countEventPerActor(dataFrame: DataFrame) = {
     val selectedFields = dataFrame.select($"id", $"actor.id".alias("idAttore"))
