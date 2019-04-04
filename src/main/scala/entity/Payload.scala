@@ -10,4 +10,4 @@ case class Payload (
                    before: String,
                    commits: Seq[Commit],
                    pull_request: PullRequest
-                   )
+                   ) extends Serializable

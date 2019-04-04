@@ -48,7 +48,11 @@ class CommitDataFrameOperation(sc: SparkContext) {
     val filtered = df.filter("commits is not null")
     val time = filtered.withColumn("time", Converter.convertColumnTime($"created_at")).withColumn("size", size($"commits"))
     val finalDF = time.groupBy("time").agg(sum("size").as("tot"))
-    finalDF
+    val max = finalDF.withColumn("max", max($"tot"))
+
+    val joined = finalDF.join(max, finalDF("tot") === max("max")).select("*")
+    joined
+
   }
 
   def getMaxCommitForRepo(dataframe: DataFrame) = {

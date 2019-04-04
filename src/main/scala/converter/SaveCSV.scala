@@ -15,8 +15,6 @@ object SaveCSV {
 
 
   def saveActorCsv(rdd: RDD[(String, Actor)]) = {
-
-    println(s"dio porco:  ${ApplicationConfig.instance().getProperty(PropertyEnum.csvLocation)}")
     val out = new BufferedWriter(new FileWriter(ApplicationConfig.instance().getProperty(PropertyEnum.csvLocation) + "actor.csv"))
     val writer = new CSVWriter(out)
     val actorSchema = Array("id", "login", "display_login", "gravatar_id", "url", "avatar_url")
@@ -214,6 +212,58 @@ object SaveCSV {
 
     rdd.collect.foreach { case (actor: Actor, count) => {
       val arr = Array("(" + actor.id.toString(), actor.login, actor.display_login, actor.gravatar_id, actor.url, actor.avatar_url + ")", count.toString)
+      finalArr.add(arr)
+    }
+    }
+    writer.writeAll(finalArr)
+    out.close()
+  }
+
+
+  def saveCommitForActor(rdd: RDD[(Actor, Int)]) = {
+    val out = new BufferedWriter(new FileWriter(ApplicationConfig.instance().getProperty(PropertyEnum.csvLocation) + "actor_Ncommit.csv"))
+    val writer = new CSVWriter(out)
+    val actorSchema = Array("(id", "login", "display_login", "gravatar_id", "url", "avatar_url)", "count")
+
+    val finalArr: java.util.List[Array[String]] = new util.ArrayList()
+    finalArr.add(actorSchema)
+
+    rdd.collect.foreach { case (actor, count) => {
+      val arr = Array("(" + actor.id.toString(), actor.login, actor.display_login, actor.gravatar_id, actor.url, actor.avatar_url + ")", count.toString)
+      finalArr.add(arr)
+    }
+    }
+    writer.writeAll(finalArr)
+    out.close()
+  }
+
+  def saveCommitForActorAndType(rdd: RDD[((Actor,String), Int)]) = {
+    val out = new BufferedWriter(new FileWriter(ApplicationConfig.instance().getProperty(PropertyEnum.csvLocation) + "actorTYpe_Ncommit.csv"))
+    val writer = new CSVWriter(out)
+    val actorSchema = Array("((id", "login", "display_login", "gravatar_id", "url", "avatar_url), type)", "count")
+
+    val finalArr: java.util.List[Array[String]] = new util.ArrayList()
+    finalArr.add(actorSchema)
+
+    rdd.collect.foreach { case ((actor, tipo), count) => {
+      val arr = Array("((" + actor.id.toString(), actor.login, actor.display_login, actor.gravatar_id, actor.url, actor.avatar_url + "),"+ tipo + ")", count.toString)
+      finalArr.add(arr)
+    }
+    }
+    writer.writeAll(finalArr)
+    out.close()
+  }
+
+  def saveCommitForHour(rdd: RDD[(Int, Int)]) = {
+    val out = new BufferedWriter(new FileWriter(ApplicationConfig.instance().getProperty(PropertyEnum.csvLocation) + "Hour_nCommir.csv"))
+    val writer = new CSVWriter(out)
+    val actorSchema = Array("hour", "count")
+
+    val finalArr: java.util.List[Array[String]] = new util.ArrayList()
+    finalArr.add(actorSchema)
+
+    rdd.collect.foreach { case (hour, count) => {
+      val arr = Array(hour.toString , count.toString)
       finalArr.add(arr)
     }
     }
