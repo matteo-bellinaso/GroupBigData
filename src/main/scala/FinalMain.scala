@@ -1,11 +1,12 @@
 import converter.Converter
 import entity.{Actor, Payload, Repo}
-import operations.DataFrameOperation.{EventDataframeOperation, SaveToPostgres}
+import fileUtilities.{FileDownloader, FileExtractor}
+import operations.DataFrameOperation.EventDataframeOperation
 import operations.DataSetOperations.EventDataSetOperation
-import operations.RDDOperation.EventRddOperations
+import operations.RDDOperation.{EventRddOperations, SaveToCsv}
 import org.apache.spark.sql.SparkSession
 import properties.{ApplicationConfig, SparkConfig}
-import utility.Paths
+import utility.{Paths, PropertyEnum}
 
 object FinalMain {
 
@@ -22,13 +23,13 @@ object FinalMain {
     sparkSession.sparkContext.setLogLevel("ERROR")
 
 
-    /*val filename = new FileDownloader().downloadWithRedirect("http://data.githubarchive.org/" + ApplicationConfig.instance().getProperty(PropertyEnum.date) + "-" + ApplicationConfig.instance().getProperty(PropertyEnum.hour) + ".json.gz")
+    val filename = new FileDownloader().downloadWithRedirect("http://data.githubarchive.org/" + ApplicationConfig.instance().getProperty(PropertyEnum.date) + "-" + ApplicationConfig.instance().getProperty(PropertyEnum.hour) + ".json.gz")
     val fileExtractor = new FileExtractor
     val path = fileExtractor.extract(
       ApplicationConfig.instance().getProperty(PropertyEnum.downloadLocation) + filename,
-      ApplicationConfig.instance().getProperty(PropertyEnum.jsonLocation) + Converter.cutExtensionFromFilename(filename) + "-" + System.currentTimeMillis() + ".json")*/
+      ApplicationConfig.instance().getProperty(PropertyEnum.jsonLocation) + Converter.cutExtensionFromFilename(filename) + "-" + System.currentTimeMillis() + ".json")
 
-    val path = "/Users/davidebelvedere/Documents/SparkLynx/GroupBigData3/src/archive/JSONFiles/2018-03-01-0-1554223122222.json"
+   // val path = "/Users/davidebelvedere/Documents/SparkLynx/GroupBigData3/src/archive/JSONFiles/2018-03-01-0-1554223122222.json"
 
     val rddFromJson = Converter.convertJSONToRDD(path, sparkSession)
 
@@ -44,9 +45,9 @@ object FinalMain {
 
     //eventDfOp.authorList(dataframeFromJson)
 
-    // eventRDDOp.countEventPerTypeActorAndRepo(rddFromJson)
+    //eventRDDOp.countEventPerTypeActorAndRepo(rddFromJson)
 
-    //SaveToCsv.csvActorList(rddFromJson)
+    SaveToCsv.csvActorList(rddFromJson)
 
     //SaveToCsv.csvRepoList(rddFromJson)
 
