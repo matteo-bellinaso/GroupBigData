@@ -8,7 +8,7 @@ import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.types._
 import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.functions._
+import org.apache.spark.sql.functions.{max, _}
 
 import scala.collection.mutable
 
@@ -48,9 +48,8 @@ class CommitDataFrameOperation(sc: SparkContext) {
     val filtered = df.filter("commits is not null")
     val time = filtered.withColumn("time", Converter.convertColumnTime($"created_at")).withColumn("size", size($"commits"))
     val finalDF = time.groupBy("time").agg(sum("size").as("tot"))
-    val max = finalDF.withColumn("max", max($"tot"))
 
-    val joined = finalDF.join(max, finalDF("tot") === max("max")).select("*")
+    val joined = finalDF.join(finalDF, finalDF("tot") === max("tot")).select("*")
     joined
 
   }
@@ -59,8 +58,11 @@ class CommitDataFrameOperation(sc: SparkContext) {
     val df = dataframe.select($"repo", $"payload.commits")
     val filtered = df.filter("commits is not null")
     val nCommit = filtered.withColumn("size", size($"commits"))
-    val finalDF = nCommit.groupBy($"repo").agg(max("size") as ("max"))
-    finalDF
+    val grouped = nCommit.groupBy($"repo").agg(sum("size") as ("tot"))
+    val maxi = grouped.agg(max($"tot").alias("max"))
+
+    val joined = grouped.join(maxi, grouped("tot") === max("max")).select("*")
+    joined
   }
 
 

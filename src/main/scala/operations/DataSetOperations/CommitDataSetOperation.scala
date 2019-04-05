@@ -53,4 +53,16 @@ class CommitDataSetOperation[T](sparkSession: SparkSession) {
     println(s"il massimo è al minuto:   min = ${grouped._1}, n° = ${grouped._2}")
   }
 
+  def getCommitPerRepo(dataset: Dataset[T]) = {
+    val mapped = dataset.map { case (id: String, tipo: String, actor: Actor, pubblico: Boolean, repo: Repo, created_at: String, payload: Payload)
+    => (repo, payload)
+    }.filter(x => x != null)
+    val filtered = mapped.filter(x => x._2 != null && x._2.commits != null)
+    val finalDS = filtered.map{case (repo: Repo, payload: Payload) => (repo, payload.commits.size)}
+    val group = finalDS.groupBy("_1").sum("_2").as[(Repo, BigInt)]
+    val grouped = group.reduce((x,y) => { if(x._2 > y._2) x else y})
+    grouped
+    println(s"il massimo per repo:   repo = ${grouped._1}, n° = ${grouped._2}")
+  }
+
 }
