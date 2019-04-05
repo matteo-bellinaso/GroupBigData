@@ -2,15 +2,50 @@ package operations.DataSetOperations
 
 import java.text.SimpleDateFormat
 
-import converter.Converter
-import entity.{Actor, Payload, Repo}
+import entity._
 import org.apache.spark.sql.{Dataset, SparkSession}
 import org.joda.time.DateTime
 
 
-class EventDataSetOperation[T](sparkSession: SparkSession) {
+class EventDataSetOperation[T](implicit sparkSession: SparkSession) {
 
-  import sparkSession.sqlContext.implicits._
+  import sparkSession.implicits._
+
+
+  def actorList(dataset: Dataset[T]): Dataset[(String, Actor)] = {
+    val actorDataset = dataset.map { case (_, _, actor: Actor, _, _, _, _) =>
+      ("" + actor.id, actor)
+    }.distinct()
+    actorDataset
+  }
+
+  def repoList(dataset: Dataset[T]): Dataset[(String, Repo)] = {
+    val repoDataset = dataset.map { case (_, _, _, _, repo: Repo, _, _) =>
+      ("" + repo.id, repo)
+    }.distinct()
+    repoDataset
+  }
+
+  def typeList(dataset: Dataset[T]): Dataset[String] = {
+    val typeDataset = dataset.map { case (_, tipo: String, _, _, _, _, _) =>
+      tipo
+    }.distinct()
+    typeDataset
+  }
+
+
+  def authorList(dataset: Dataset[T]): Dataset[(String, Author)] = {
+
+    val commitsDataset = dataset.filter("_7 is not null  and _7.commits is not null ")
+      .flatMap { case (_, _, _, _, _, _, payload: Payload) =>
+        payload.commits
+      }
+
+
+    val authorDataset = commitsDataset.map { case (commit: Commit) => (commit.author.name, commit.author)
+    }.distinct()
+    authorDataset
+  }
 
   def countEventPerActor(dataset: Dataset[T]): Dataset[(Actor, BigInt)] = {
 
@@ -156,7 +191,7 @@ class EventDataSetOperation[T](sparkSession: SparkSession) {
     }
     val grouppedDataframe = mappedDataset.groupBy("_3", "_5", "_6").count() //actor,repo,hours
 
-    grouppedDataframe.as[(Actor, Repo, BigInt, BigInt)].map{case ( actor: Actor, repo: Repo,ora: BigInt, numero:BigInt) => ((actor,repo,ora),numero)}
+    grouppedDataframe.as[(Actor, Repo, BigInt, BigInt)].map { case (actor: Actor, repo: Repo, ora: BigInt, numero: BigInt) => ((actor, repo, ora), numero) }
   }
 
 }

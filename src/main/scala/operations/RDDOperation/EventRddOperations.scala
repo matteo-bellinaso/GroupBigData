@@ -30,19 +30,16 @@ class EventRddOperations[T] { //(mainParsed.id, mainParsed.`type`, mainParsed.ac
   }
 
   def authorList(rdd: RDD[T]): RDD[(String, Author)] = {
-    val commitsRdd = rdd.flatMap { case (_, _, _, _, _, _, payload: Payload) =>
+    val commitsRdd = rdd.filter {
+      case (_, _, _, _, _, _, payload: Payload) => payload != null && payload.commits != null && payload.commits.nonEmpty
+    }.flatMap { case (_, _, _, _, _, _, payload: Payload) =>
       payload.commits
-    }.filter(x => x != null)
+    }
 
-
-    val collectedRdd= commitsRdd.collect
-    collectedRdd.foreach{case (commit: Commit)=>println(s"idAutoreeee: ${commit.sha} ")}
 
     val authorRdd = commitsRdd.map { case (commit: Commit) => (commit.author.name, commit.author)
     }.distinct()
 
-    val collectedRdd1= authorRdd.collect
-     collectedRdd1.foreach{case (name,_)=>println(s"idAutore: ${name} ")}
     authorRdd
   }
 
@@ -77,7 +74,7 @@ class EventRddOperations[T] { //(mainParsed.id, mainParsed.`type`, mainParsed.ac
 
   }
 
-  def counEventPerTypeAndActor(rdd: RDD[T]): //Unit ={
+  def countEventPerTypeAndActor(rdd: RDD[T]): //Unit ={
   RDD[((String, Actor), Int)] = {
 
     val rddToReturn = groupPerTypeAndActor(rdd).map { case ((tipo: String, actor: Actor), iterable: Iterable[T]) => ((tipo, actor), iterable.size) }
@@ -88,7 +85,7 @@ class EventRddOperations[T] { //(mainParsed.id, mainParsed.`type`, mainParsed.ac
     rddToReturn
   }
 
-  def counEventPerRepo(rdd: RDD[T]): //Unit ={
+  def countEventPerRepo(rdd: RDD[T]): //Unit ={
   RDD[(Repo, Int)] = {
 
     val rddToReturn = groupByRepo(rdd).map { case (repo: Repo, iterable: Iterable[T]) => (repo, iterable.size) }
@@ -105,9 +102,9 @@ class EventRddOperations[T] { //(mainParsed.id, mainParsed.`type`, mainParsed.ac
 
     val rddToReturn = groupPerTypeActorAndRepo(rdd).map { case ((actor: Actor, repo: Repo, tipo: String), iterable: Iterable[T]) => ((tipo, actor, repo), iterable.size) }
 
-    /*val collectedRdd = rddToReturn.collect
+    val collectedRdd = rddToReturn.collect
     collectedRdd.foreach { case ((tipo, actor: Actor, repo: Repo), numero) => println(s"idAttore: ${actor.id}, tipo: ${tipo}, idRepo ${repo.id} --> eventi: ${numero} ") }
-*/
+
     rddToReturn
   }
 
@@ -190,9 +187,7 @@ class EventRddOperations[T] { //(mainParsed.id, mainParsed.`type`, mainParsed.ac
   }
 
 
-  private def groupPerActor(rdd: RDD[T]): RDD[(Actor, scala.Iterable[T])]
-
-  = {
+  private def groupPerActor(rdd: RDD[T]): RDD[(Actor, scala.Iterable[T])] = {
     val grouppedRdd = rdd.groupBy { case (_, _, actor: Actor, _, _, _, _) => actor }
     grouppedRdd
   }

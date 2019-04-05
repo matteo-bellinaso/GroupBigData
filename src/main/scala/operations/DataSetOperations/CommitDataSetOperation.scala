@@ -5,9 +5,9 @@ import entity.{Actor, Commit, Payload, Repo}
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 
-class CommitDataSetOperation[T](sparkSession: SparkSession) {
+class CommitDataSetOperation[T](implicit sparkSession: SparkSession) {
 
-  import sparkSession.sqlContext.implicits._
+  import sparkSession.implicits._
 
   def getCommitCount(dataSet: Dataset[T]) = {
 
@@ -50,7 +50,7 @@ class CommitDataSetOperation[T](sparkSession: SparkSession) {
     val group = finalDS.groupBy("_1").sum("_2").as[(String, BigInt)]
     val grouped = group.reduce((x,y) => { if(x._2 > y._2) x else y})
     grouped
-    println(s"il massimo è al minuto:   min = ${grouped._1}, n° = ${grouped._2}")
+   // println(s"il massimo è al minuto:   min = ${grouped._1}, n° = ${grouped._2}")
   }
 
   def getCommitPerRepo(dataset: Dataset[T]) = {
