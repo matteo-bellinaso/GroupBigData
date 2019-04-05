@@ -47,7 +47,7 @@ object FinalMain {
 
     //eventRDDOp.countEventPerTypeActorAndRepo(rddFromJson)
 
-    SaveToCsv.csvActorList(rddFromJson)
+    //SaveToCsv.csvActorList(rddFromJson)
 
     //SaveToCsv.csvRepoList(rddFromJson)
 
@@ -65,6 +65,10 @@ object FinalMain {
     // SaveToCsv.csvFindActorWithMinEvents(rddFromJson)
     //SaveToCsv.csvFindActorRepoAndHourWithMaxEvents(rddFromJson)
     // SaveToCsv.csvFindActorRepoAndHourWithMinEvents(rddFromJson)
+
+    SaveToCsv.csvCommitPerHour(rddFromJson)
+    SaveToCsv.csvCommitPerActorType(rddFromJson)
+
 
     /*Salvataggio su postgres
 
